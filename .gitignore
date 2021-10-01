@@ -1,3 +1,6 @@
+# Added: mac ignore
+.DS_Store
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
