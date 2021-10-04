@@ -33,9 +33,7 @@ func main() {
 	// degree.Module
 
 	// basic assignment initialisation
-	a1 := Assignment{AssignmentName: "name", Mark: 77, Weight: 50}
-	fmt.Println(a1)
-	a2 := oop.Assignment{AssignmentName: "name2", Mark: 77, Weight: 50}
+	a2 := oop.Assignment{AssignmentName: "Accounting", Mark: 77, Weight: 50}
 	fmt.Println(a2)
 }
 
