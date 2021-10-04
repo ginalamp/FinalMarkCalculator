@@ -1,4 +1,4 @@
-package main
+package oop
 
 type Degree struct {
 	DegreeName string

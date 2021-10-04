@@ -4,29 +4,11 @@ import (
 	"bufio" // user terminal input
 	"fmt"
 
-	// "oop"
+	"ginalamp-mark-tracker/oop"
 	"os"      // user input
 	"strconv" // type conversion
 	"strings"
 )
-
-// type Degree struct {
-// 	DegreeName string
-// 	Modules    []Module
-// }
-
-// type Module struct {
-// 	ModuleName  string
-// 	Weight      int // weight of the module in the total degree
-// 	Mark        int
-// 	Assignments []Assignment
-// }
-
-// type Assignment struct {
-// 	AssignmentName string
-// 	Mark           int
-// 	Weight         int // weight of the assignment in the module
-// }
 
 func readInput(userPrompt string) string {
 	reader := bufio.NewReader(os.Stdin)
@@ -50,8 +32,11 @@ func main() {
 
 	// degree.Module
 
-	e1 := Assignment{AssignmentName: "name", Mark: 69, Weight: 50}
-	fmt.Println(e1)
+	// basic assignment initialisation
+	a1 := Assignment{AssignmentName: "name", Mark: 77, Weight: 50}
+	fmt.Println(a1)
+	a2 := oop.Assignment{AssignmentName: "name2", Mark: 77, Weight: 50}
+	fmt.Println(a2)
 }
 
 // string to int
