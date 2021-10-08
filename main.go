@@ -38,6 +38,7 @@ func inputCsv() {
 		if i == 0 {
 			continue
 		}
+		// convert string to slice
 		moduleData := strings.Split(row[0], ";")
 
 		// add init module names to module slice
@@ -52,22 +53,27 @@ func inputCsv() {
 		modules = append(modules, module)
 	}
 	fmt.Println(modules)
+	fmt.Println(modules[0].CalculateMark())
 }
 
+// run program
 func main() {
 	fmt.Println("Welcome to Gina's Mark Calculator")
 	inputType := stringToInt(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
 
-	if inputType == 0 {
+	switch inputType {
+	case 0:
 		inputCsv()
-	} else if inputType == 1 {
+	case 1:
 		inputTerminal()
+	default:
+		fmt.Println("why u like dis")
 	}
-
-	// basic assignment initialisation
-	a2 := oop.Component{Mark: 77, Weight: 50}
-	fmt.Println(a2)
 }
+
+// **************************************************************************************
+// *** helper functions
+// **************************************************************************************
 
 // read terminal input
 func readInput(userPrompt string) string {
