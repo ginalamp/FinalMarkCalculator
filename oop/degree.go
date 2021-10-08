@@ -1,19 +1,20 @@
 package oop
 
 type Degree struct {
-	DegreeName string
-	Modules    []Module
+	Name    string
+	Modules []Module
 }
 
 type Module struct {
-	ModuleName  string
-	Weight      int // weight of the module in the total degree
-	Mark        int
-	Assignments []Assignment
+	Name       string
+	Weight     int // weight of the module in the total degree
+	Mark       int
+	Components []Component
 }
 
-type Assignment struct {
-	AssignmentName string
-	Mark           int
-	Weight         int // % weight of the assignment in the module
+// e.g. assighment
+type Component struct {
+	Name   string
+	Mark   int
+	Weight int // % weight of the assignment in the module
 }
