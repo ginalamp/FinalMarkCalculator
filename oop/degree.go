@@ -1,5 +1,7 @@
 package oop
 
+import "fmt"
+
 type Degree struct {
 	Name    string
 	Modules []Module
@@ -34,4 +36,27 @@ func AddModuleComponent(mark, weight int) Component {
 	component.Mark = mark
 	component.Weight = weight
 	return component
+}
+
+// calculate final mark depending on type
+type Marker interface {
+	CalculateMark() float64
+}
+
+// calculate degree overall mark
+func (degree *Degree) CalculateMark() float64 {
+	if degree == nil {
+		fmt.Println("<nil>")
+		return 0
+	}
+	return 80
+}
+
+// calculate module overall mark
+func (module *Module) CalculateMark() float64 {
+	if module == nil {
+		fmt.Println("<nil>")
+		return 0
+	}
+	return 80
 }
