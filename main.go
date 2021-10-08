@@ -27,10 +27,10 @@ func inputTerminal() {
 	fmt.Println(numModules)
 }
 
+// process csv input
 func inputCsv() {
 	records := readCsvFile("marksInput.csv")
 	// numModules := len(records) - 1
-	// fmt.Println(len(records))
 
 	// add modules (1 module per row except first row)
 	var modules []oop.Module
@@ -54,7 +54,11 @@ func inputCsv() {
 		modules = append(modules, module)
 	}
 	fmt.Println(modules)
-	fmt.Println(modules[0].CalculateMark())
+	// calculate module mark
+	for _, module := range modules {
+		fmt.Printf("%v: %v%%\n", module.Name, module.CalculateMark())
+	}
+	// fmt.Println(modules[0].CalculateMark())
 }
 
 // run program
@@ -105,7 +109,7 @@ func readCsvFile(filePath string) [][]string {
 	return records
 }
 
-// convert "50%" to 50
+// convert "50%" to 50.0
 func percentageToFloat(s string) float64 {
 	r := strings.Replace(s, "%", "", -1)
 	num, err := strconv.ParseFloat(r, Float64Type)
@@ -115,7 +119,7 @@ func percentageToFloat(s string) float64 {
 	return num
 }
 
-// string input to int
+// string input to float
 func stringToFloat(s string) float64 {
 	i, err := strconv.ParseFloat(s, Float64Type)
 	if err != nil {
