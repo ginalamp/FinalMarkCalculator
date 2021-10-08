@@ -2,8 +2,11 @@ package oop
 
 import "fmt"
 
+var Error float64 = 0
+
+// degree is a bunch of modules
 type Degree struct {
-	Name    string
+	// Name    string
 	Modules []Module
 }
 
@@ -11,15 +14,15 @@ type Degree struct {
 type Module struct {
 	Name string
 	// Weight     int // weight of the module in the total degree
-	Mark       int
+	Mark       float64
 	Components []Component
 }
 
 // e.g. assignment
 type Component struct {
 	// Name   string
-	Mark   int
-	Weight int // % weight of the assignment in the module
+	Mark   float64
+	Weight float64 // % weight of the assignment in the module
 }
 
 // init module
@@ -31,7 +34,7 @@ func NewModule(moduleName string) Module {
 }
 
 // add module component
-func AddModuleComponent(mark, weight int) Component {
+func AddModuleComponent(mark, weight float64) Component {
 	component := Component{}
 	component.Mark = mark
 	component.Weight = weight
@@ -56,7 +59,13 @@ func (degree *Degree) CalculateMark() float64 {
 func (module *Module) CalculateMark() float64 {
 	if module == nil {
 		fmt.Println("<nil>")
-		return 0
+		return Error
 	}
-	return 80
+	sum := 0.0
+	for _, component := range module.Components {
+		sum += component.Mark * component.Weight / 100
+	}
+	// fmt.Println(module.Components)
+
+	return sum
 }
