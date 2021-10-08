@@ -13,21 +13,22 @@ import (
 )
 
 // global variables
-var Error int = 0
-var Empty int = 0
+var Error float64 = 0
+var Empty float64 = 0
+var Float64Type int = 64
 
 // process terminal input
 func inputTerminal() {
 	// read input from terminal
-	numModules := 0
+	numModules := 0.0
 	for numModules < 1 {
-		numModules = stringToInt(readInput("How many modules do you have?"))
+		numModules = stringToFloat(readInput("How many modules do you have?"))
 	}
 	fmt.Println(numModules)
 }
 
 func inputCsv() {
-	records := readCsvFile("temp.csv")
+	records := readCsvFile("marksInput.csv")
 	// numModules := len(records) - 1
 	// fmt.Println(len(records))
 
@@ -45,9 +46,9 @@ func inputCsv() {
 		module := oop.NewModule(moduleData[0])
 
 		// add marks and weights to module components
-		for i := 2; i < len(moduleData[1:]); i += 2 {
-			mark := percentageToInt(moduleData[i-1])
-			weight := percentageToInt(moduleData[i])
+		for i := 2; i <= len(moduleData[1:]); i += 2 {
+			mark := percentageToFloat(moduleData[i-1])
+			weight := percentageToFloat(moduleData[i])
 			module.Components = append(module.Components, oop.AddModuleComponent(mark, weight))
 		}
 		modules = append(modules, module)
@@ -59,7 +60,7 @@ func inputCsv() {
 // run program
 func main() {
 	fmt.Println("Welcome to Gina's Mark Calculator")
-	inputType := stringToInt(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
+	inputType := stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
 
 	switch inputType {
 	case 0:
@@ -105,9 +106,9 @@ func readCsvFile(filePath string) [][]string {
 }
 
 // convert "50%" to 50
-func percentageToInt(s string) int {
+func percentageToFloat(s string) float64 {
 	r := strings.Replace(s, "%", "", -1)
-	num, err := strconv.Atoi(r)
+	num, err := strconv.ParseFloat(r, Float64Type)
 	if err != nil {
 		return Empty
 	}
@@ -115,8 +116,8 @@ func percentageToInt(s string) int {
 }
 
 // string input to int
-func stringToInt(s string) int {
-	i, err := strconv.Atoi(s)
+func stringToFloat(s string) float64 {
+	i, err := strconv.ParseFloat(s, Float64Type)
 	if err != nil {
 		fmt.Println("Invalid input. Please type in a number (integer)")
 		// handle error
