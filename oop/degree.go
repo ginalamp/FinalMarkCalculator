@@ -13,6 +13,13 @@ type Module struct {
 	Components []Component
 }
 
+// e.g. assignment
+type Component struct {
+	// Name   string
+	Mark   int
+	Weight int // % weight of the assignment in the module
+}
+
 // init module
 func NewModule(moduleName string) Module {
 	module := Module{}
@@ -21,14 +28,10 @@ func NewModule(moduleName string) Module {
 	return module
 }
 
-// func addModuleComponent(componentName string, mark, weight int) Component {
-// 	component := Component{}
-// 	component.Name := componentName
-// }
-
-// e.g. assighment
-type Component struct {
-	Name   string
-	Mark   int
-	Weight int // % weight of the assignment in the module
+// add module component
+func AddModuleComponent(mark, weight int) Component {
+	component := Component{}
+	component.Mark = mark
+	component.Weight = weight
+	return component
 }
