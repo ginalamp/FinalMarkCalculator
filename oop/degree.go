@@ -7,7 +7,8 @@ var Error float64 = 0
 // degree is a bunch of modules
 type Degree struct {
 	// Name    string
-	Modules []Module
+	Mark    float64
+	Modules *[]Module
 }
 
 // assumption: all modules weigh the same amount to the degree
@@ -15,7 +16,7 @@ type Module struct {
 	Name string
 	// Weight     int // weight of the module in the total degree
 	Mark       float64
-	Components []Component
+	Components []Component // TODO: change to pointer to component
 }
 
 // e.g. assignment
@@ -41,6 +42,14 @@ func AddModuleComponent(mark, weight float64) Component {
 	return component
 }
 
+// func DeleteModule(module *Module) {
+
+// }
+
+// func DeleteModuleComponent(component Component, module Module) {
+
+// }
+
 // calculate final mark depending on type
 type Marker interface {
 	CalculateMark() float64
@@ -52,7 +61,12 @@ func (degree *Degree) CalculateMark() float64 {
 		fmt.Println("<nil>")
 		return 0
 	}
-	return 80
+	sum := 0.0
+	numModules := len(*degree.Modules)
+	for _, module := range *degree.Modules {
+		sum += module.Mark
+	}
+	return sum / float64(numModules)
 }
 
 // calculate module overall mark
@@ -65,7 +79,5 @@ func (module *Module) CalculateMark() float64 {
 	for _, component := range module.Components {
 		sum += component.Mark * component.Weight / 100
 	}
-	// fmt.Println(module.Components)
-
 	return sum
 }
