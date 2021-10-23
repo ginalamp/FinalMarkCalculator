@@ -17,6 +17,62 @@ var Error float64 = -1
 var Empty float64 = -1
 var Float64Type int = 64
 
+// run program
+func main() {
+	fmt.Println("Welcome to Gina's Mark Calculator")
+	for {
+		inputType := Empty
+		for {
+			inputType = stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
+			if !(inputType == 0 || inputType == 1) {
+				continue
+			}
+			break
+		}
+		switch inputType {
+		case 0:
+			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv)")
+			if len(csvFile) == 0 {
+				csvFile = "marks.csv"
+			}
+			modules := inputCsv(csvFile)
+
+			// set calculated module mark
+			for i, module := range modules {
+				modules[i].Mark = module.CalculateMark()
+			}
+			// set calculated degree mark
+			degree := oop.Degree{Modules: &modules}
+			degree.Mark = degree.CalculateMark()
+
+			outputTerminal(modules, degree)
+
+			// check if user wants to save results to profile
+			profile := oop.NewProfile("Pietie")
+			profile.Degree = oop.Degree{Modules: &modules}
+
+			fmt.Println("Outputting results to csv...")
+			outputCsv(modules, profile)
+		case 1:
+			inputTerminal()
+		default:
+			fmt.Println("why u like dis")
+		}
+
+		// check if user wants to continue with the program
+		run := strings.ToLower(readInput("Would you like to calculate another profile's mark? (Enter 'Y' if you do, otherwise enter any key to exit the program)"))
+		if run == "yes" || run == "y" {
+			continue
+		}
+		fmt.Println("Thank you for using Gina's mark calculator!")
+		break
+	}
+}
+
+// **************************************************************************************
+// *** input/output
+// **************************************************************************************
+
 // process terminal input
 func inputTerminal() {
 	// read input from terminal
@@ -78,67 +134,11 @@ func outputCsv(modules []oop.Module, profile oop.Profile) {
 	defer writer.Flush()
 
 	for _, module := range modules {
-		// value := []string{module.Name, float2string(module.CalculateMark())}
-		value := []string{module.Name, float2string(module.Mark)}
+		value := []string{module.Name, floatToString(module.Mark)}
 		err := writer.Write(value)
 		checkError("Cannot write to file", err)
 	}
 }
-
-// run program
-func main() {
-	fmt.Println("Welcome to Gina's Mark Calculator")
-	for {
-		inputType := Empty
-		for {
-			inputType = stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
-			if !(inputType == 0 || inputType == 1) {
-				continue
-			}
-			break
-		}
-		switch inputType {
-		case 0:
-			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv)")
-			if len(csvFile) == 0 {
-				csvFile = "marks.csv"
-			}
-			modules := inputCsv(csvFile)
-
-			// calculate module mark
-			for i, module := range modules {
-				modules[i].Mark = module.CalculateMark()
-			}
-			// add modules to degree & calculate mark
-			degree := oop.Degree{Modules: &modules}
-			degree.Mark = degree.CalculateMark()
-			outputTerminal(modules, degree)
-
-			// check if user wants to save results to profile
-			profile := oop.NewProfile("Pietie")
-			profile.Degree = oop.Degree{Modules: &modules}
-
-			fmt.Println("Outputting results to csv...")
-			outputCsv(modules, profile)
-		case 1:
-			inputTerminal()
-		default:
-			fmt.Println("why u like dis")
-		}
-
-		// check if user wants to continue with the program
-		run := strings.ToLower(readInput("Would you like to calculate another profile's mark? (Enter 'Y' if you do, otherwise enter any key to exit the program)"))
-		if run == "yes" || run == "y" {
-			continue
-		}
-		fmt.Println("Thank you for using Gina's mark calculator!")
-		break
-	}
-}
-
-// **************************************************************************************
-// *** utility functions
-// **************************************************************************************
 
 // read terminal input
 func readInput(userPrompt string) string {
@@ -169,6 +169,17 @@ func readCsvFile(filePath string) [][]string {
 	return records
 }
 
+// **************************************************************************************
+// *** helper functions
+// **************************************************************************************
+
+// check if error != nil
+func checkError(message string, err error) {
+	if err != nil {
+		log.Fatal(message, err)
+	}
+}
+
 // convert "50%" to 50.0
 func percentageToFloat(s string) float64 {
 	r := strings.Replace(s, "%", "", -1)
@@ -184,21 +195,12 @@ func stringToFloat(s string) float64 {
 	i, err := strconv.ParseFloat(s, Float64Type)
 	if err != nil {
 		fmt.Println("Invalid input. Please type in a number (integer)")
-		// handle error
-		// fmt.Println(err)
 		return (Error)
 	}
 	return (i)
 }
 
-// check if error != nil
-func checkError(message string, err error) {
-	if err != nil {
-		log.Fatal(message, err)
-	}
-}
-
 // convert float64 to string with 0 decimals
-func float2string(f float64) string {
+func floatToString(f float64) string {
 	return fmt.Sprintf("%.0f", f)
 }
