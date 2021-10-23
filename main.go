@@ -13,8 +13,8 @@ import (
 )
 
 // global variables
-var Error float64 = 0
-var Empty float64 = 0
+var Error float64 = -1
+var Empty float64 = -1
 var Float64Type int = 64
 
 // process terminal input
@@ -28,8 +28,8 @@ func inputTerminal() {
 }
 
 // process csv input
-func inputCsv() {
-	records := readCsvFile("marksInput.csv")
+func inputCsv(csvFile string) []oop.Module {
+	records := readCsvFile(csvFile)
 	// numModules := len(records) - 1
 
 	// add modules (1 module per row except first row)
@@ -53,22 +53,55 @@ func inputCsv() {
 		}
 		modules = append(modules, module)
 	}
-	fmt.Println(modules)
+	return modules
+}
+
+// output Module final marks to terminal
+func outputTerminal(modules []oop.Module) {
 	// calculate module mark
 	for _, module := range modules {
 		fmt.Printf("%v: %v%%\n", module.Name, module.CalculateMark())
 	}
-	// fmt.Println(modules[0].CalculateMark())
+}
+
+// output results to csvq
+// https://golangcode.com/write-data-to-a-csv-file/
+func outputCsv(modules []oop.Module) {
+	file, err := os.Create("result.csv")
+	checkError("Cannot create file", err)
+	defer file.Close() // always close the file
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for _, module := range modules {
+		value := []string{module.Name, float2string(module.CalculateMark())}
+		err := writer.Write(value)
+		checkError("Cannot write to file", err)
+	}
 }
 
 // run program
 func main() {
 	fmt.Println("Welcome to Gina's Mark Calculator")
-	inputType := stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
-
+	inputType := Empty
+	for {
+		inputType = stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
+		if !(inputType == 0 || inputType == 1) {
+			continue
+		}
+		break
+	}
 	switch inputType {
 	case 0:
-		inputCsv()
+		csvFile := readInput("Enter the name of your mark csv file (default is marksInput.csv)")
+		if len(csvFile) == 0 {
+			csvFile = "marksInput.csv"
+		}
+		modules := inputCsv(csvFile)
+		outputTerminal(modules)
+		fmt.Println("Outputting results to csv")
+		outputCsv(modules)
 	case 1:
 		inputTerminal()
 	default:
@@ -77,13 +110,13 @@ func main() {
 }
 
 // **************************************************************************************
-// *** helper functions
+// *** utility functions
 // **************************************************************************************
 
 // read terminal input
 func readInput(userPrompt string) string {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(userPrompt)
+	fmt.Print(userPrompt + ": \n")
 	userInput, _ := reader.ReadString('\n')
 	userInput = strings.TrimSpace(userInput) // remove whitespace
 
@@ -114,7 +147,7 @@ func percentageToFloat(s string) float64 {
 	r := strings.Replace(s, "%", "", -1)
 	num, err := strconv.ParseFloat(r, Float64Type)
 	if err != nil {
-		return Empty
+		return Error
 	}
 	return num
 }
@@ -125,8 +158,20 @@ func stringToFloat(s string) float64 {
 	if err != nil {
 		fmt.Println("Invalid input. Please type in a number (integer)")
 		// handle error
-		fmt.Println(err)
+		// fmt.Println(err)
 		return (Error)
 	}
 	return (i)
+}
+
+// check if error != nil
+func checkError(message string, err error) {
+	if err != nil {
+		log.Fatal(message, err)
+	}
+}
+
+// convert float64 to string with 0 decimals
+func float2string(f float64) string {
+	return fmt.Sprintf("%.0f", f)
 }
