@@ -64,21 +64,37 @@ func outputTerminal(modules []oop.Module) {
 	}
 }
 
+// output results to csvq
+// https://golangcode.com/write-data-to-a-csv-file/
 func outputCsv(modules []oop.Module) {
+	file, err := os.Create("result.csv")
+	checkError("Cannot create file", err)
+	defer file.Close() // always close the file
 
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for _, module := range modules {
+		value := []string{module.Name, fmt.Sprintf("%f", module.CalculateMark())}
+		err := writer.Write(value)
+		checkError("Cannot write to file", err)
+	}
 }
 
 // run program
 func main() {
-	fmt.Println("running command line arguments")
 	fmt.Println("Welcome to Gina's Mark Calculator")
 	inputType := stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
 
 	switch inputType {
 	case 0:
-		csvFile := readInput("Enter the name of your mark csv file")
+		csvFile := readInput("Enter the name of your mark csv file (default is marksInput.csv)")
+		if len(csvFile) == 0 {
+			csvFile = "marksInput.csv"
+		}
 		modules := inputCsv(csvFile)
 		outputTerminal(modules)
+		fmt.Println("running output csv")
 		outputCsv(modules)
 	case 1:
 		inputTerminal()
@@ -125,7 +141,7 @@ func percentageToFloat(s string) float64 {
 	r := strings.Replace(s, "%", "", -1)
 	num, err := strconv.ParseFloat(r, Float64Type)
 	if err != nil {
-		return Empty
+		return Error
 	}
 	return num
 }
@@ -140,4 +156,11 @@ func stringToFloat(s string) float64 {
 		return (Error)
 	}
 	return (i)
+}
+
+// check if error != nil
+func checkError(message string, err error) {
+	if err != nil {
+		log.Fatal(message, err)
+	}
 }
