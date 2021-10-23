@@ -28,7 +28,7 @@ func inputTerminal() {
 }
 
 // process csv input
-func inputCsv(csvFile string) {
+func inputCsv(csvFile string) []oop.Module {
 	records := readCsvFile(csvFile)
 	// numModules := len(records) - 1
 
@@ -53,12 +53,19 @@ func inputCsv(csvFile string) {
 		}
 		modules = append(modules, module)
 	}
-	fmt.Println(modules)
+	return modules
+}
+
+// output Module final marks to terminal
+func outputTerminal(modules []oop.Module) {
 	// calculate module mark
 	for _, module := range modules {
 		fmt.Printf("%v: %v%%\n", module.Name, module.CalculateMark())
 	}
-	// fmt.Println(modules[0].CalculateMark())
+}
+
+func outputCsv(modules []oop.Module) {
+
 }
 
 // run program
@@ -70,7 +77,9 @@ func main() {
 	switch inputType {
 	case 0:
 		csvFile := readInput("Enter the name of your mark csv file")
-		inputCsv(csvFile)
+		modules := inputCsv(csvFile)
+		outputTerminal(modules)
+		outputCsv(modules)
 	case 1:
 		inputTerminal()
 	default:
@@ -79,7 +88,7 @@ func main() {
 }
 
 // **************************************************************************************
-// *** helper functions
+// *** utility functions
 // **************************************************************************************
 
 // read terminal input
