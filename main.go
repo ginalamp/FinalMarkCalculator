@@ -28,8 +28,8 @@ func inputTerminal() {
 }
 
 // process csv input
-func inputCsv() {
-	records := readCsvFile("marksInput.csv")
+func inputCsv(csvFile string) {
+	records := readCsvFile(csvFile)
 	// numModules := len(records) - 1
 
 	// add modules (1 module per row except first row)
@@ -63,12 +63,14 @@ func inputCsv() {
 
 // run program
 func main() {
+	fmt.Println("running command line arguments")
 	fmt.Println("Welcome to Gina's Mark Calculator")
 	inputType := stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
 
 	switch inputType {
 	case 0:
-		inputCsv()
+		csvFile := readInput("Enter the name of your mark csv file")
+		inputCsv(csvFile)
 	case 1:
 		inputTerminal()
 	default:
@@ -83,7 +85,7 @@ func main() {
 // read terminal input
 func readInput(userPrompt string) string {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(userPrompt)
+	fmt.Print(userPrompt + ": \n")
 	userInput, _ := reader.ReadString('\n')
 	userInput = strings.TrimSpace(userInput) // remove whitespace
 
