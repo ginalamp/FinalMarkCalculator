@@ -66,8 +66,8 @@ func outputTerminal(modules []oop.Module) {
 
 // output results to csvq
 // https://golangcode.com/write-data-to-a-csv-file/
-func outputCsv(modules []oop.Module) {
-	file, err := os.Create("result.csv")
+func outputCsv(modules []oop.Module, profile oop.Profile) {
+	file, err := os.Create(profile.Name + "_marks.csv")
 	checkError("Cannot create file", err)
 	defer file.Close() // always close the file
 
@@ -95,19 +95,23 @@ func main() {
 		}
 		switch inputType {
 		case 0:
-			csvFile := readInput("Enter the name of your mark csv file (default is marksInput.csv)")
+			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv)")
 			if len(csvFile) == 0 {
-				csvFile = "marksInput.csv"
+				csvFile = "marks.csv"
 			}
 			modules := inputCsv(csvFile)
 			outputTerminal(modules)
 			fmt.Println("Outputting results to csv")
-			outputCsv(modules)
+			// check if user wants to save results to profile
+			profile := oop.NewProfile("Pietie")
+			profile.Degree = oop.Degree{Modules: &modules}
+			outputCsv(modules, profile)
 		case 1:
 			inputTerminal()
 		default:
 			fmt.Println("why u like dis")
 		}
+
 		// check if user wants to continue with the program
 		run := strings.ToLower(readInput("Would you like to calculate another profile's mark? (Enter 'Y' if you do, otherwise enter any key to exit the program)"))
 		if run == "yes" || run == "y" {
