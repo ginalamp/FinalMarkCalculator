@@ -57,10 +57,13 @@ func inputCsv(csvFile string) []oop.Module {
 }
 
 // output Module final marks to terminal
-func outputTerminal(modules []oop.Module) {
+func outputTerminal(modules []oop.Module, degree oop.Degree) {
+	// calculate degree mark
+	fmt.Printf("Your overall degree mark: %v%%\n", degree.Mark)
+
 	// calculate module mark
 	for _, module := range modules {
-		fmt.Printf("%v: %v%%\n", module.Name, module.CalculateMark())
+		fmt.Printf("%v: %v%%\n", module.Name, module.Mark)
 	}
 }
 
@@ -75,7 +78,8 @@ func outputCsv(modules []oop.Module, profile oop.Profile) {
 	defer writer.Flush()
 
 	for _, module := range modules {
-		value := []string{module.Name, float2string(module.CalculateMark())}
+		// value := []string{module.Name, float2string(module.CalculateMark())}
+		value := []string{module.Name, float2string(module.Mark)}
 		err := writer.Write(value)
 		checkError("Cannot write to file", err)
 	}
@@ -100,11 +104,21 @@ func main() {
 				csvFile = "marks.csv"
 			}
 			modules := inputCsv(csvFile)
-			outputTerminal(modules)
-			fmt.Println("Outputting results to csv")
+
+			// calculate module mark
+			for i, module := range modules {
+				modules[i].Mark = module.CalculateMark()
+			}
+			// add modules to degree & calculate mark
+			degree := oop.Degree{Modules: &modules}
+			degree.Mark = degree.CalculateMark()
+			outputTerminal(modules, degree)
+
 			// check if user wants to save results to profile
 			profile := oop.NewProfile("Pietie")
 			profile.Degree = oop.Degree{Modules: &modules}
+
+			fmt.Println("Outputting results to csv...")
 			outputCsv(modules, profile)
 		case 1:
 			inputTerminal()
