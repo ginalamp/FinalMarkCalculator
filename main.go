@@ -84,28 +84,37 @@ func outputCsv(modules []oop.Module) {
 // run program
 func main() {
 	fmt.Println("Welcome to Gina's Mark Calculator")
-	inputType := Empty
 	for {
-		inputType = stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
-		if !(inputType == 0 || inputType == 1) {
+		inputType := Empty
+		for {
+			inputType = stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
+			if !(inputType == 0 || inputType == 1) {
+				continue
+			}
+			break
+		}
+		switch inputType {
+		case 0:
+			csvFile := readInput("Enter the name of your mark csv file (default is marksInput.csv)")
+			if len(csvFile) == 0 {
+				csvFile = "marksInput.csv"
+			}
+			modules := inputCsv(csvFile)
+			outputTerminal(modules)
+			fmt.Println("Outputting results to csv")
+			outputCsv(modules)
+		case 1:
+			inputTerminal()
+		default:
+			fmt.Println("why u like dis")
+		}
+		// check if user wants to continue with the program
+		run := strings.ToLower(readInput("Would you like to calculate another profile's mark? (Enter 'Y' if you do, otherwise enter any key to exit the program)"))
+		if run == "yes" || run == "y" {
 			continue
 		}
+		fmt.Println("Thank you for using Gina's mark calculator!")
 		break
-	}
-	switch inputType {
-	case 0:
-		csvFile := readInput("Enter the name of your mark csv file (default is marksInput.csv)")
-		if len(csvFile) == 0 {
-			csvFile = "marksInput.csv"
-		}
-		modules := inputCsv(csvFile)
-		outputTerminal(modules)
-		fmt.Println("Outputting results to csv")
-		outputCsv(modules)
-	case 1:
-		inputTerminal()
-	default:
-		fmt.Println("why u like dis")
 	}
 }
 
