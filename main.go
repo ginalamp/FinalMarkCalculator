@@ -45,21 +45,23 @@ out:
 			if userExit(hasProfile) {
 				break out
 			}
+			profile := oop.NewProfile("")
 			switch hasProfile {
 			case "0":
-				userHasProfile()
+				// profile = userHasProfile()
 			case "1":
-				userNewProfile()
+				profile = userNewProfile()
 			default:
 				userNoProfile()
 			}
 
-			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv), Enter exit to quit the program:")
+			// get csv name
+			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv):")
 			// allow user to quit the program
 			if userExit(csvFile) {
 				break out
 			}
-
+			// default set to "marks.csv"
 			if len(csvFile) == 0 {
 				csvFile = "marks.csv"
 			}
@@ -76,7 +78,7 @@ out:
 			outputTerminal(modules, degree)
 
 			// check if user wants to save results to profile
-			profile := oop.NewProfile("Pietie")
+			// profile := oop.NewProfile("Pietie")
 			profile.Degree = oop.Degree{Modules: &modules}
 
 			fmt.Println("Outputting results to csv...")
@@ -101,12 +103,15 @@ out:
 func userHasProfile() {
 	name := readInput("What is your name?")
 	fmt.Printf("Welcome back, %v!\n", name)
+	// assume that there is a <profileName>marks.csv file outputted for the user
+	fmt.Println("work in progress...")
 }
 
 // case if user want's to make a profile
-func userNewProfile() {
+func userNewProfile() oop.Profile {
 	name := readInput("Great, let's create a profile for you! What is your name?")
-	fmt.Printf("Hi, %v\nHappy to have you here!", name)
+	fmt.Printf("Hi, %v! Happy to have you here!\n", name)
+	return oop.NewProfile(name)
 }
 
 // case if user doesn't have a profile and doesn't want to make one
@@ -126,12 +131,12 @@ func inputTerminal() {
 		numModules = stringToFloat(readInput("How many modules do you have?"))
 	}
 	fmt.Println(numModules)
+	fmt.Println("work in progress...")
 }
 
 // process csv input
 func inputCsv(csvFile string) []oop.Module {
 	records := readCsvFile(csvFile)
-	// numModules := len(records) - 1
 
 	// add modules (1 module per row except first row)
 	var modules []oop.Module
@@ -169,9 +174,16 @@ func outputTerminal(modules []oop.Module, degree oop.Degree) {
 }
 
 // output results to csv
-// https://golangcode.com/write-data-to-a-csv-file/
+// Output csv https://golangcode.com/write-data-to-a-csv-file/
+// Create directory https://golangbyexample.com/create-directory-folder-golang/
 func outputCsv(modules []oop.Module, profile oop.Profile) {
-	file, err := os.Create(profile.Name + "_marks.csv")
+	// Create marks directory
+	err := os.Mkdir("marks", 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// output csv to file in directory
+	file, err := os.Create("marks/" + profile.Name + "_marks.csv")
 	checkError("Cannot create file", err)
 	defer file.Close() // always close the file
 
