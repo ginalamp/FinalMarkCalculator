@@ -26,7 +26,7 @@ out:
 		inputType := Empty
 		for {
 			fmt.Println("-----------------------------MAIN MENU-----------------------------------")
-			in := utils.ReadInput("\tEnter 0 to import a csv,\n\tEnter 1 to get the guidelines of how your csv must look like\n\tEnter exit to quit the program")
+			in := utils.ReadInput("\tEnter 0 to start\n\tEnter 1 to get the guidelines of how your csv must look like\n\tEnter exit to quit the program")
 			// allow user to quit the program
 			if utils.UserExit(in) {
 				break out
@@ -41,7 +41,7 @@ out:
 		switch inputType {
 		case 0:
 			// check if user has a profile
-			hasProfile := utils.ReadInput("\nDo you have a profile?\n\tEnter 0 if you have one,\n\tEnter 1 if you don't have one but wish to make one,\n\tEnter any other key if you don't have one and don't wish to make one:")
+			hasProfile := utils.ReadInput("\nDo you have a profile?\n\tEnter 0 if you have a profile,\n\tEnter 1 if you would like to make a new profile,\n\tEnter any other key to continue without a profile")
 			// allow user to quit the program
 			if utils.UserExit(hasProfile) {
 				break out
@@ -49,12 +49,25 @@ out:
 			profile := oop.NewProfile("")
 			switch hasProfile {
 			case "0":
-				// profile = userHasProfile()
-				if userHasProfile() == "m" {
+				choice := userHasProfile()
+				// allow user to quit the program
+				if utils.UserExit(choice) {
+					break out
+				}
+				// main menu
+				if choice == "m" {
 					continue
 				}
 			case "1":
-				userNewProfile()
+				choice := userNewProfile()
+				// allow user to quit the program
+				if utils.UserExit(choice) {
+					break out
+				}
+				// main menu
+				if choice == "m" {
+					continue
+				}
 			default:
 				userNoProfile()
 				if run(profile) == "exit" {
@@ -104,15 +117,28 @@ out:
 
 	fmt.Printf("\nWelcome back, %v!\n", username)
 	for {
+		fmt.Println("\n---------------------------PROFILE INPUT MENU----------------------------------")
 		userAction := utils.ReadInput("\tEnter 0 to view your results\n\tEnter 1 to update your results (import a new csv with your updated results)\n\tEnter any other key to go back to the main menu")
 
 		switch userAction {
 		case "0":
 			// view current results
-			file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
-			for _, line := range file {
-				fmt.Println(line)
+			modules := utils.InputCsv(OutputDirectory + username + "_marks.csv")
+			// fmt.Println(modules)
+			// set calculated module mark
+			for i, module := range modules {
+				modules[i].Mark = module.CalculateMark()
 			}
+			degree := oop.Degree{Modules: &modules}
+			degree.Mark = degree.CalculateMark()
+			degree.Name = utils.DegreeName
+
+			fmt.Printf("Your overall degree mark: %.0f%%\n", degree.Mark)
+			for _, module := range modules {
+				fmt.Printf("\t%v: %.0f%%\n", module.Name, module.Mark)
+				// fmt.Println(line)
+			}
+
 		case "1":
 			// update results
 			profile := oop.NewProfile(username)
@@ -124,20 +150,24 @@ out:
 }
 
 // case if user want's to make a profile
-func userNewProfile() oop.Profile {
+func userNewProfile() string {
 	username := ""
 	fmt.Print("\nGreat, let's create a profile for you! ")
 out:
 	for {
-		username = utils.ReadInput("\nWhat is your username?")
+		username = utils.ReadInput("\nChoose a username:")
 
 		// allow user to quit
 		if username == "exit" || username == "quit" {
-			return oop.NewProfile(username)
+			return "exit"
 		}
 		// username may not be empty
 		if username == "" {
 			fmt.Println("\nNOTE: Your username may not be empty.")
+			menu := utils.ReadInput("\tEnter 'm' to go back to the main menu\n\tEnter any other key to retry entering your username.")
+			if menu == "m" || menu == "menu" {
+				return "m"
+			}
 			continue out
 		}
 		// username needs to be unique
@@ -145,8 +175,12 @@ out:
 		for _, profile := range utils.ReadCsvFile("profiles.csv") {
 
 			if strings.EqualFold(profile[0], username) {
-				fmt.Printf("\nNOTE: The username %v is already used - please choose a unique username\n", username)
+				fmt.Printf("\nNOTE: The username '%v' is already used - please choose a unique username\n", username)
 				usernameFound = true
+				menu := utils.ReadInput("\tEnter 'm' to go back to the main menu\n\tEnter any other key to retry entering your username.")
+				if menu == "m" || menu == "menu" {
+					return "m"
+				}
 				continue out
 			}
 		}
@@ -177,7 +211,7 @@ out:
 	}
 	// log.Println("Appending succeeded")
 
-	return oop.NewProfile(username)
+	return ""
 }
 
 // case if user doesn't have a profile and doesn't want to make one
@@ -185,6 +219,7 @@ func userNoProfile() {
 	fmt.Println("\nThat's okay, you can always create a profile another time.")
 }
 
+// run marks csv input & output functions
 func run(profile oop.Profile) string {
 	// get csv name
 	csvFile := utils.ReadInput("\nEnter the relative path of your csv file (default is marks.csv - just click the Enter button to access the default):")
