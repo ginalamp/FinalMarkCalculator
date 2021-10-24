@@ -15,7 +15,7 @@ type Degree struct {
 type Module struct {
 	Name       string
 	Mark       float64
-	Components []Component // TODO: change to pointer to component
+	Components []Component
 }
 
 // e.g. assignment
@@ -39,14 +39,6 @@ func AddModuleComponent(mark, weight float64) Component {
 	component.Weight = weight
 	return component
 }
-
-// func DeleteModule(module *Module) {
-
-// }
-
-// func DeleteModuleComponent(component Component, module Module) {
-
-// }
 
 // calculate final mark depending on type
 type Marker interface {

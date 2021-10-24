@@ -1,13 +1,11 @@
 package oop
 
-// import "fmt"
+// Profile
 
 // Profile
 type Profile struct {
 	Username string
 	Degree   Degree
-	// InputFile  string
-	// OutputFile string
 }
 
 // init profile
