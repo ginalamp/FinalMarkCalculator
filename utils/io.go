@@ -179,8 +179,18 @@ func OutputFullCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree)
 	CheckError("Cannot write to file", err)
 
 	// module output
+	// for _, module := range modules {
+	// 	value = []string{module.Name, FloatToString(module.Mark)}
+	// 	err := writer.Write(value)
+	// 	CheckError("Cannot write to file", err)
+	// }
+	// module output 2
+	// moduleOutput := []string
 	for _, module := range modules {
 		value = []string{module.Name, FloatToString(module.Mark)}
+		for _, component := range module.Components {
+			value = append(value, FloatToString(component.Mark), FloatToString(component.Weight))
+		}
 		err := writer.Write(value)
 		CheckError("Cannot write to file", err)
 	}
