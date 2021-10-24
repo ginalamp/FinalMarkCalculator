@@ -51,10 +51,7 @@ out:
 				// profile = userHasProfile()
 				userHasProfile()
 			case "1":
-				profile = userNewProfile()
-				if run(profile) == "exit" {
-					break out
-				}
+				userNewProfile()
 			default:
 				userNoProfile()
 				if run(profile) == "exit" {
@@ -99,6 +96,8 @@ func userHasProfile() {
 	for _, line := range file {
 		fmt.Println(line)
 	}
+
+	// allow user to update details
 }
 
 // case if user want's to make a profile
@@ -107,17 +106,22 @@ func userNewProfile() oop.Profile {
 	fmt.Print("Great, let's create a profile for you! ")
 out:
 	for {
-		username := utils.ReadInput("What is your username?")
+		username = utils.ReadInput("What is your username?")
 
 		// allow user to quit
 		if username == "exit" || username == "quit" {
 			return oop.NewProfile(username)
 		}
+		// username may not be empty
+		if username == "" {
+			fmt.Println("ERROR: Your username may not be empty.")
+			continue out
+		}
 		// username needs to be unique
 		usernameFound := false
 		for _, profile := range utils.ReadCsvFile("profiles.csv") {
 			if profile[0] == username {
-				fmt.Printf("The username %v is already used - please choose a unique username\n", username)
+				fmt.Printf("ERROR: The username %v is already used - please choose a unique username\n", username)
 				usernameFound = true
 				continue out
 			}

@@ -1,5 +1,7 @@
 package utils
 
+// input/output helper functions
+
 import (
 	"bufio"
 	"encoding/csv"
@@ -15,10 +17,6 @@ var Error float64 = -1
 var Empty float64 = -1
 var Float64Type int = 64
 var OutputDirectory string = "marks/"
-
-// **************************************************************************************
-// *** input/output
-// **************************************************************************************
 
 // process terminal input
 func InputTerminal() {
@@ -80,7 +78,6 @@ func OutputCsv(modules []oop.Module, profile oop.Profile) {
 		log.Fatal(err)
 	}
 	// output csv to file in directory
-	// print(profile.Name)
 	fileExtension := "_marks.csv"
 	if profile.Username == "" {
 		// output only marks/marks.csv if user has empty profile
@@ -99,6 +96,10 @@ func OutputCsv(modules []oop.Module, profile oop.Profile) {
 		err := writer.Write(value)
 		CheckError("Cannot write to file", err)
 	}
+}
+
+func OutputFullCsv(modules []oop.Module, profile oop.Profile) {
+	
 }
 
 // read terminal input
