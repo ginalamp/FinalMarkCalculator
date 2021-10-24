@@ -83,11 +83,11 @@ func InputCsv(csvFile string) []oop.Module {
 // output Module final marks to terminal
 func OutputTerminal(modules []oop.Module, degree oop.Degree) {
 	// calculate degree mark
-	fmt.Printf("Your overall degree mark: %v%%\n", degree.Mark)
+	fmt.Printf("Your overall degree mark: %.0f%%\n", degree.Mark)
 
 	// calculate module mark
 	for _, module := range modules {
-		fmt.Printf("%v: %v%%\n", module.Name, module.Mark)
+		fmt.Printf("\t%v: %.0f%%\n", module.Name, module.Mark)
 	}
 }
 
@@ -112,7 +112,7 @@ func OutputCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree) {
 	defer writer.Flush()
 
 	// degree output
-	value := []string{Concat2StringsCsvFormat(degree.Name, FloatToString(degree.Mark))}
+	value := []string{degree.Name + ";" + FloatToString(degree.Mark)}
 	err = writer.Write(value)
 	CheckError("Cannot write to file", err)
 
@@ -144,7 +144,8 @@ func ReadInput(userPrompt string) string {
 }
 
 // read csv file
-// https://stackoverflow.com/questions/24999079/reading-csv-file-in-go
+// read csv https://stackoverflow.com/questions/24999079/reading-csv-file-in-go
+// different row lengths https://stackoverflow.com/questions/61336787/how-do-i-fix-the-wrong-number-of-fields-with-the-missing-commas-in-csv-file-in
 func ReadCsvFile(filePath string) [][]string {
 	f, err := os.Open(filePath)
 	if err != nil {
@@ -153,8 +154,7 @@ func ReadCsvFile(filePath string) [][]string {
 	defer f.Close()
 
 	csvReader := csv.NewReader(f)
-	// csvReader.Comma = ';'          // delimiter = ; instead of ,
-	csvReader.FieldsPerRecord = -1 // added https://stackoverflow.com/questions/61336787/how-do-i-fix-the-wrong-number-of-fields-with-the-missing-commas-in-csv-file-in
+	csvReader.FieldsPerRecord = -1 // add csv with different row lengths
 	records, err := csvReader.ReadAll()
 	if err != nil {
 		log.Fatal("Unable to parse file as CSV for "+filePath, err)

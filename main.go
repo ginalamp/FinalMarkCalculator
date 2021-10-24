@@ -204,7 +204,7 @@ func run(profile oop.Profile) string {
 	// TODO: check if user wants to save results to profile
 	profile.Degree = oop.Degree{Name: degree.Name, Modules: &modules}
 
-	fmt.Println("Outputting results to csv...")
+	fmt.Println("Outputting results to .csv...")
 	// utils.OutputCsv(modules, profile)
 	utils.OutputCsv(modules, profile, degree)
 	return ""

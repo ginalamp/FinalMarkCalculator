@@ -28,8 +28,3 @@ func CheckError(message string, err error) {
 		log.Fatal(message, err)
 	}
 }
-
-// concatenate strings in csv format
-func Concat2StringsCsvFormat(string1, string2 string) string {
-	return string1 + ";" + string2
-}
