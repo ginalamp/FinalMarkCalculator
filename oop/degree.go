@@ -6,7 +6,7 @@ var Error float64 = 0
 
 // degree is a bunch of modules
 type Degree struct {
-	// Name    string
+	Name    string
 	Mark    float64
 	Modules *[]Module
 }

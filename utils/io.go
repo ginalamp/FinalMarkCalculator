@@ -17,6 +17,8 @@ var Error float64 = -1
 var Empty float64 = -1
 var Float64Type int = 64
 var OutputDirectory string = "marks/"
+var ColumnHeaders []string
+var DegreeName string
 
 // process terminal input
 func InputTerminal() {
@@ -66,7 +68,14 @@ func InputCsv2(csvFile string) []oop.Module {
 	for i, row := range records {
 		// skip title/1st row
 		if i == 0 || i == 1 {
-			// TODO set degree name
+			// set degree name
+			if i == 0 {
+				DegreeName = strings.Split(row[0], ";")[0]
+			}
+			// set column headers
+			if i == 1 {
+				ColumnHeaders = row
+			}
 			continue
 		}
 		// replace spaces with commas
@@ -140,8 +149,42 @@ func OutputCsv(modules []oop.Module, profile oop.Profile) {
 	}
 }
 
-func OutputFullCsv(modules []oop.Module, profile oop.Profile) {
+func OutputFullCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree) {
+	// Create marks directory
+	err := MakeDirectoryIfNotExists(OutputDirectory)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// output csv to file in directory
+	fileExtension := "_marks.csv"
+	if profile.Username == "" {
+		// output only marks/marks.csv if user has empty profile
+		fileExtension = "marks.csv"
+	}
+	file, err := os.Create(OutputDirectory + profile.Username + fileExtension)
 
+	CheckError("Cannot create file", err)
+	defer file.Close() // always close the file
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	// degree output
+	fmt.Println("degree name -> ", degree.Name)
+	value := []string{degree.Name, FloatToString(degree.Mark)}
+	err = writer.Write(value)
+	CheckError("Cannot write to file", err)
+
+	// set column headers
+	err = writer.Write(ColumnHeaders)
+	CheckError("Cannot write to file", err)
+
+	// module output
+	for _, module := range modules {
+		value = []string{module.Name, FloatToString(module.Mark)}
+		err := writer.Write(value)
+		CheckError("Cannot write to file", err)
+	}
 }
 
 // read terminal input

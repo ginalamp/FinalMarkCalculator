@@ -198,13 +198,15 @@ func run(profile oop.Profile) string {
 	// set calculated degree mark
 	degree := oop.Degree{Modules: &modules}
 	degree.Mark = degree.CalculateMark()
+	degree.Name = utils.DegreeName
 
 	utils.OutputTerminal(modules, degree)
 
-	// check if user wants to save results to profile
-	profile.Degree = oop.Degree{Modules: &modules}
+	// TODO: check if user wants to save results to profile
+	profile.Degree = oop.Degree{Name: degree.Name, Modules: &modules}
 
 	fmt.Println("Outputting results to csv...")
-	utils.OutputCsv(modules, profile)
+	// utils.OutputCsv(modules, profile)
+	utils.OutputFullCsv(modules, profile, degree)
 	return ""
 }
