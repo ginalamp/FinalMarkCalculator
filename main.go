@@ -213,6 +213,11 @@ func outputCsv(modules []oop.Module, profile oop.Profile) {
 	}
 	// output csv to file in directory
 	file, err := os.Create(OutputDirectory + profile.Name + "_marks.csv")
+	if profile.Name == "" {
+		// output only marks/marks.csv if user has empty profile
+		file, err = os.Create(OutputDirectory + profile.Name + "marks.csv")
+	}
+
 	checkError("Cannot create file", err)
 	defer file.Close() // always close the file
 
