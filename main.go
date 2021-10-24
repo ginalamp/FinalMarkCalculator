@@ -1,5 +1,7 @@
 package main
 
+// main running of program
+
 import (
 	"encoding/csv"
 	"fmt"
@@ -16,6 +18,7 @@ var Error float64 = -1
 var Empty float64 = -1
 var Float64Type int = 64
 var OutputDirectory string = "marks/"
+var marksFilePath string = "marks.csv"
 
 // run program
 func main() {
@@ -70,7 +73,7 @@ out:
 				}
 			default:
 				userNoProfile()
-				if run(profile) == "exit" {
+				if run(profile, marksFilePath) == "exit" {
 					break out
 				}
 			}
@@ -91,7 +94,6 @@ out:
 
 // case if user has a profile
 func userHasProfile() string {
-	// assume that there is a <profileusername>marks.csv file outputted for the user
 	username := ""
 out:
 	for {
@@ -120,10 +122,12 @@ out:
 		fmt.Println("\n---------------------------PROFILE INPUT MENU----------------------------------")
 		userAction := utils.ReadInput("\tEnter 0 to view your results\n\tEnter 1 to update your results (import a new csv with your updated results)\n\tEnter any other key to go back to the main menu")
 
+		// assume that there is a <profileusername>_marks.csv file outputted for the user
+		marksFilePath := OutputDirectory + username + "_marks.csv"
 		switch userAction {
 		case "0":
 			// view current results
-			modules := utils.InputCsv(OutputDirectory + username + "_marks.csv")
+			modules := utils.InputCsv(marksFilePath)
 			// calculate reults
 			for i, module := range modules {
 				modules[i].Mark = module.CalculateMark()
@@ -137,7 +141,8 @@ out:
 		case "1":
 			// update results
 			profile := oop.NewProfile(username)
-			run(profile)
+
+			run(profile, marksFilePath)
 		default:
 			return ""
 		}
@@ -150,7 +155,7 @@ func userNewProfile() string {
 	fmt.Print("\nGreat, let's create a profile for you! ")
 out:
 	for {
-		username = utils.ReadInput("\nChoose a username:")
+		username = strings.ToLower(utils.ReadInput("\nChoose a username:"))
 
 		// allow user to quit
 		if utils.UserExit(username) {
@@ -192,11 +197,10 @@ out:
 			break
 		}
 	}
-
+	// create new profile
 	fmt.Printf("\nHi, %v! Happy to have you here!\n", username)
 	profile := oop.NewProfile(username)
-
-	run(profile)
+	run(profile, marksFilePath)
 
 	// append user data to profiles.csv
 	f, err := os.OpenFile("profiles.csv", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
@@ -222,16 +226,16 @@ func userNoProfile() {
 }
 
 // run marks csv input & output functions
-func run(profile oop.Profile) string {
+func run(profile oop.Profile, marksFilePath string) string {
 	// get csv name
-	csvFile := utils.ReadInput("\nEnter the relative path of your csv file (default is marks.csv - just click the Enter button to access the default):")
+	csvFile := utils.ReadInput("\nEnter the relative path of your csv file\n\tIf you have a profile the default is set to marks/<username>_marks\n\tThe default is marks.csv if you just created a profile, or are an anonymous user")
 	// allow user to quit the program
 	if utils.UserExit(csvFile) {
 		return "exit"
 	}
-	// default set to "marks.csv"
+	// default file path
 	if len(csvFile) == 0 {
-		csvFile = "marks.csv"
+		csvFile = marksFilePath
 	}
 	// modules := utils.InputCsv(csvFile)
 	modules := utils.InputCsv(csvFile)
