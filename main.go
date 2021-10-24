@@ -51,10 +51,7 @@ out:
 				// profile = userHasProfile()
 				userHasProfile()
 			case "1":
-				profile = userNewProfile()
-				if run(profile) == "exit" {
-					break out
-				}
+				userNewProfile()
 			default:
 				userNoProfile()
 				if run(profile) == "exit" {
@@ -79,38 +76,78 @@ out:
 
 // case if user has a profile
 func userHasProfile() {
-	name := utils.ReadInput("What is your name?")
-	fmt.Printf("Welcome back, %v!\n", name)
-	// assume that there is a <profileName>marks.csv file outputted for the user
+	// assume that there is a <profileusername>marks.csv file outputted for the user
+	username := ""
+out:
+	for {
+		username = utils.ReadInput("What is your username?")
 
-	userFound := false
-	for _, profile := range utils.ReadCsvFile("profiles.csv") {
-		if profile[0] == name {
-			fmt.Printf("User %v found\n", name)
-			userFound = true
+		userFound := false
+		for _, profile := range utils.ReadCsvFile("profiles.csv") {
+			if profile[0] == username {
+				log.Printf("User %v found\n", username)
+				userFound = true
+				break out
+			}
+		}
+		if !userFound {
+			fmt.Printf("Oops... seems like we don't have '%v' in out database. Make sure you've spelt it correctly\n", username)
+			continue
 		}
 	}
-	if !userFound {
-		fmt.Println("Oops... seems like we cannot find your profile")
-		// TODO: do something
-		return
-	}
-	file := utils.ReadCsvFile(OutputDirectory + name + "_marks.csv")
-	for _, line := range file {
-		fmt.Println(line)
+
+	fmt.Printf("Welcome back, %v!\n", username)
+	userAction := utils.ReadInput("\tEnter 0 to view your results\n\tEnter 1 to update your results (import a new csv with your updated results)")
+
+	switch userAction {
+	case "0":
+		// view current results
+		file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
+		for _, line := range file {
+			fmt.Println(line)
+		}
+	case "1":
+		// update results
+		fmt.Println("work in progress")
+		// run(profile)
+	default:
+		fmt.Println("why u like dis")
 	}
 }
 
 // case if user want's to make a profile
 func userNewProfile() oop.Profile {
-	name := utils.ReadInput("Great, let's create a profile for you! What is your name?")
+	username := ""
+	fmt.Print("Great, let's create a profile for you! ")
+out:
+	for {
+		username = utils.ReadInput("What is your username?")
 
-	// allow user to quit
-	if name == "exit" || name == "quit" {
-		return oop.NewProfile(name)
+		// allow user to quit
+		if username == "exit" || username == "quit" {
+			return oop.NewProfile(username)
+		}
+		// username may not be empty
+		if username == "" {
+			fmt.Println("ERROR: Your username may not be empty.")
+			continue out
+		}
+		// username needs to be unique
+		usernameFound := false
+		for _, profile := range utils.ReadCsvFile("profiles.csv") {
+			if profile[0] == username {
+				fmt.Printf("ERROR: The username %v is already used - please choose a unique username\n", username)
+				usernameFound = true
+				continue out
+			}
+		}
+		if !usernameFound {
+			break
+		}
 	}
-	fmt.Printf("Hi, %v! Happy to have you here!\n", name)
-	profile := oop.NewProfile(name)
+
+	fmt.Printf("Hi, %v! Happy to have you here!\n", username)
+	profile := oop.NewProfile(username)
 
 	run(profile)
 
@@ -121,7 +158,8 @@ func userNewProfile() oop.Profile {
 	}
 	defer f.Close()
 	var data [][]string
-	data = append(data, []string{profile.Name, "123"})
+	password := "123" // TODO make this user input
+	data = append(data, []string{profile.Username, password})
 
 	w := csv.NewWriter(f)
 	w.WriteAll(data)
@@ -130,7 +168,7 @@ func userNewProfile() oop.Profile {
 	}
 	log.Println("Appending succeeded")
 
-	return oop.NewProfile(name)
+	return oop.NewProfile(username)
 }
 
 // case if user doesn't have a profile and doesn't want to make one
@@ -149,6 +187,7 @@ func run(profile oop.Profile) string {
 	if len(csvFile) == 0 {
 		csvFile = "marks.csv"
 	}
+	// modules := utils.InputCsv(csvFile)
 	modules := utils.InputCsv(csvFile)
 
 	// set calculated module mark
@@ -158,13 +197,15 @@ func run(profile oop.Profile) string {
 	// set calculated degree mark
 	degree := oop.Degree{Modules: &modules}
 	degree.Mark = degree.CalculateMark()
+	degree.Name = utils.DegreeName
 
 	utils.OutputTerminal(modules, degree)
 
-	// check if user wants to save results to profile
-	profile.Degree = oop.Degree{Modules: &modules}
+	// TODO: check if user wants to save results to profile
+	profile.Degree = oop.Degree{Name: degree.Name, Modules: &modules}
 
-	fmt.Println("Outputting results to csv...")
-	utils.OutputCsv(modules, profile)
+	fmt.Println("Outputting results to .csv...")
+	// utils.OutputCsv(modules, profile)
+	utils.OutputCsv(modules, profile, degree)
 	return ""
 }

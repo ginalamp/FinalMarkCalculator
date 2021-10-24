@@ -7,4 +7,4 @@ go build
 ```
 
 ## Basic functionality
-Calculate real time final mark per module.
+Calculate real time final mark for overall degree and per module.

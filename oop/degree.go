@@ -6,22 +6,20 @@ var Error float64 = 0
 
 // degree is a bunch of modules
 type Degree struct {
-	// Name    string
+	Name    string
 	Mark    float64
 	Modules *[]Module
 }
 
 // assumption: all modules weigh the same amount to the degree
 type Module struct {
-	Name string
-	// Weight     int // weight of the module in the total degree
+	Name       string
 	Mark       float64
 	Components []Component // TODO: change to pointer to component
 }
 
 // e.g. assignment
 type Component struct {
-	// Name   string
 	Mark   float64
 	Weight float64 // % weight of the assignment in the module
 }
