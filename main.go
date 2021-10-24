@@ -97,12 +97,22 @@ out:
 	}
 
 	fmt.Printf("Welcome back, %v!\n", username)
-	file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
-	for _, line := range file {
-		fmt.Println(line)
-	}
+	userAction := utils.ReadInput("\tEnter 0 to view your results\n\tEnter 1 to update your results (import a new csv with your updated results)")
 
-	// TODO: allow user to update details
+	switch userAction {
+	case "0":
+		// view current results
+		file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
+		for _, line := range file {
+			fmt.Println(line)
+		}
+	case "1":
+		// update results
+		fmt.Println("work in progress")
+		// run(profile)
+	default:
+		fmt.Println("why u like dis")
+	}
 }
 
 // case if user want's to make a profile
@@ -175,9 +185,11 @@ func run(profile oop.Profile) string {
 	}
 	// default set to "marks.csv"
 	if len(csvFile) == 0 {
-		csvFile = "marks.csv"
+		// csvFile = "marks.csv"
+		csvFile = "marks2.csv"
 	}
-	modules := utils.InputCsv(csvFile)
+	// modules := utils.InputCsv(csvFile)
+	modules := utils.InputCsv2(csvFile)
 
 	// set calculated module mark
 	for i, module := range modules {

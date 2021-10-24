@@ -57,6 +57,54 @@ func InputCsv(csvFile string) []oop.Module {
 	return modules
 }
 
+// process csv input
+func InputCsv2(csvFile string) []oop.Module {
+	records := ReadCsvFile(csvFile)
+	fmt.Println("records---> ", records)
+
+	// add modules (1 module per row except first row)
+	var modules []oop.Module
+	for i, row := range records {
+		// skip title/1st row
+		if i == 0 || i == 1 {
+			// TODO set degree name
+			continue
+		}
+		// replace spaces with commas
+		for i, item := range row {
+			fmt.Println("item ->", item)
+			if item == " " {
+				row[i] = ","
+			}
+		}
+		// convert string to slice
+		fmt.Println("row --", row)
+		moduleData := strings.Split(row[0], ";")
+		fmt.Println("moduleData ->", moduleData)
+
+		// add init module names to module slice
+		module := oop.NewModule(moduleData[0])
+
+		// add marks and weights to module components
+		for i := 3; i <= len(moduleData[1:]); i += 2 {
+			mark := PercentageToFloat(moduleData[i-1])
+			if mark < 0 {
+				mark = 0
+			}
+			fmt.Println("mark --", mark)
+
+			weight := PercentageToFloat(moduleData[i])
+			if weight < 0 {
+				weight = 0
+			}
+			fmt.Println("weight --", weight)
+			module.Components = append(module.Components, oop.AddModuleComponent(mark, weight))
+		}
+		modules = append(modules, module)
+	}
+	return modules
+}
+
 // output Module final marks to terminal
 func OutputTerminal(modules []oop.Module, degree oop.Degree) {
 	// calculate degree mark
@@ -99,7 +147,7 @@ func OutputCsv(modules []oop.Module, profile oop.Profile) {
 }
 
 func OutputFullCsv(modules []oop.Module, profile oop.Profile) {
-	
+
 }
 
 // read terminal input
@@ -123,6 +171,8 @@ func ReadCsvFile(filePath string) [][]string {
 	defer f.Close()
 
 	csvReader := csv.NewReader(f)
+	// csvReader.Comma = ';'          // delimiter = ; instead of ,
+	csvReader.FieldsPerRecord = -1 // added https://stackoverflow.com/questions/61336787/how-do-i-fix-the-wrong-number-of-fields-with-the-missing-commas-in-csv-file-in
 	records, err := csvReader.ReadAll()
 	if err != nil {
 		log.Fatal("Unable to parse file as CSV for "+filePath, err)
