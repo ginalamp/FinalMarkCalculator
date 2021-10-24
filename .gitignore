@@ -1,5 +1,4 @@
 # Added: csv and xlsx
-*.csv
 *.xlsx
 
 # Added: program executable
