@@ -49,6 +49,7 @@ out:
 			switch hasProfile {
 			case "0":
 				// profile = userHasProfile()
+				userHasProfile()
 			case "1":
 				profile = userNewProfile()
 			default:
@@ -104,7 +105,25 @@ func userHasProfile() {
 	name := readInput("What is your name?")
 	fmt.Printf("Welcome back, %v!\n", name)
 	// assume that there is a <profileName>marks.csv file outputted for the user
-	fmt.Println("work in progress...")
+
+	userFound := false
+	for _, profile := range readCsvFile("profiles.csv") {
+		if profile[0] == name {
+			fmt.Printf("User %v found\n", name)
+			userFound = true
+		}
+		fmt.Println(profile)
+	}
+	if !userFound {
+		fmt.Println("Oops... seems like we cannot find your profile")
+		// TODO: do something
+		return
+	}
+	file := readCsvFile("marks/" + name + "_marks.csv")
+	for _, line := range file {
+		fmt.Println(line)
+	}
+
 }
 
 // case if user want's to make a profile
