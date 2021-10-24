@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
+	"log"
+	"os"
 
 	"ginalamp-mark-tracker/oop"   // Profile, Degree, Module, Component
 	"ginalamp-mark-tracker/utils" // utility functions
@@ -97,13 +100,37 @@ func userHasProfile() {
 	for _, line := range file {
 		fmt.Println(line)
 	}
-
 }
 
 // case if user want's to make a profile
 func userNewProfile() oop.Profile {
 	name := utils.ReadInput("Great, let's create a profile for you! What is your name?")
+
+	// allow user to quit
+	if name == "exit" || name == "quit" {
+		return oop.NewProfile(name)
+	}
 	fmt.Printf("Hi, %v! Happy to have you here!\n", name)
+	profile := oop.NewProfile(name)
+
+	run(profile)
+
+	// append user data to profiles.csv
+	f, err := os.OpenFile("profiles.csv", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	var data [][]string
+	data = append(data, []string{profile.Name, "123"})
+
+	w := csv.NewWriter(f)
+	w.WriteAll(data)
+	if err := w.Error(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Appending succeeded")
+
 	return oop.NewProfile(name)
 }
 
