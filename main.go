@@ -114,8 +114,8 @@ out:
 		}
 	case "1":
 		// update results
-		fmt.Println("work in progress")
-		// run(profile)
+		profile := oop.NewProfile(username)
+		run(profile)
 	default:
 		fmt.Println("why u like dis")
 	}
@@ -136,14 +136,14 @@ out:
 		}
 		// username may not be empty
 		if username == "" {
-			fmt.Println("ERROR: Your username may not be empty.")
+			fmt.Println("NOTE: Your username may not be empty.")
 			continue out
 		}
 		// username needs to be unique
 		usernameFound := false
 		for _, profile := range utils.ReadCsvFile("profiles.csv") {
 			if profile[0] == username {
-				fmt.Printf("ERROR: The username %v is already used - please choose a unique username\n", username)
+				fmt.Printf("NOTE: The username %v is already used - please choose a unique username\n", username)
 				usernameFound = true
 				continue out
 			}
@@ -185,7 +185,7 @@ func userNoProfile() {
 
 func run(profile oop.Profile) string {
 	// get csv name
-	csvFile := utils.ReadInput("Enter the name of your mark csv file (default is marks.csv):")
+	csvFile := utils.ReadInput("Enter the relative path of your csv file (default is marks.csv):")
 	// allow user to quit the program
 	if utils.UserExit(csvFile) {
 		return "exit"
