@@ -191,6 +191,7 @@ func OutputFullCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree)
 		for _, component := range module.Components {
 			value = append(value, FloatToString(component.Mark), FloatToString(component.Weight))
 		}
+		value = []string{strings.Join(value, ";")}
 		err := writer.Write(value)
 		CheckError("Cannot write to file", err)
 	}
