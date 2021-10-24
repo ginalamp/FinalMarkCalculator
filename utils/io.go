@@ -60,7 +60,6 @@ func InputCsv(csvFile string) []oop.Module {
 // process csv input
 func InputCsv2(csvFile string) []oop.Module {
 	records := ReadCsvFile(csvFile)
-	fmt.Println("records---> ", records)
 
 	// add modules (1 module per row except first row)
 	var modules []oop.Module
@@ -72,32 +71,27 @@ func InputCsv2(csvFile string) []oop.Module {
 		}
 		// replace spaces with commas
 		for i, item := range row {
-			fmt.Println("item ->", item)
 			if item == " " {
 				row[i] = ","
 			}
 		}
 		// convert string to slice
-		fmt.Println("row --", row)
 		moduleData := strings.Split(row[0], ";")
-		fmt.Println("moduleData ->", moduleData)
 
 		// add init module names to module slice
 		module := oop.NewModule(moduleData[0])
 
 		// add marks and weights to module components
-		for i := 3; i <= len(moduleData[1:]); i += 2 {
+		colStart := 3
+		for i := colStart; i <= len(moduleData[1:]); i += 2 {
 			mark := PercentageToFloat(moduleData[i-1])
-			if mark < 0 {
-				mark = 0
-			}
-			fmt.Println("mark --", mark)
-
 			weight := PercentageToFloat(moduleData[i])
-			if weight < 0 {
-				weight = 0
+
+			// set empty columns to 0
+			if weight == Empty {
+				mark, weight = 0, 0
 			}
-			fmt.Println("weight --", weight)
+
 			module.Components = append(module.Components, oop.AddModuleComponent(mark, weight))
 		}
 		modules = append(modules, module)
