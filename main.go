@@ -1,6 +1,6 @@
 package main
 
-// main running of program
+// main running of program: 21773513
 
 import (
 	"encoding/csv"
@@ -22,7 +22,8 @@ var marksFilePath string = "marks.csv"
 
 // run program
 func main() {
-	fmt.Println("Welcome to Gina's Mark Calculator!")
+	fmt.Println("Welcome to my Mark Calculator!")
+	fmt.Println("This program allows you to know your final mark for all your modules and your degree in real time.")
 	fmt.Println("You may enter 'exit' or 'quit' at any input point if you wish to quit the program.")
 out:
 	for {
@@ -89,7 +90,7 @@ out:
 		}
 		break
 	}
-	fmt.Println("\nThank you for using Gina's mark calculator!")
+	fmt.Println("\nThank you for using my mark calculator!")
 }
 
 // case if user has a profile
