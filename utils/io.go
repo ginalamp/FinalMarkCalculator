@@ -80,7 +80,7 @@ func OutputCsv(modules []oop.Module, profile oop.Profile) {
 		log.Fatal(err)
 	}
 	// output csv to file in directory
-	print(profile.Name)
+	// print(profile.Name)
 	fileExtension := "_marks.csv"
 	if profile.Name == "" {
 		// output only marks/marks.csv if user has empty profile

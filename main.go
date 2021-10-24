@@ -25,7 +25,7 @@ out:
 	for {
 		inputType := Empty
 		for {
-			in := utils.ReadInput("Enter 0 to import a csv, Enter 1 to manually add entries:")
+			in := utils.ReadInput("Mark input:\n\tEnter 0 to import a csv,\n\tEnter 1 to manually add entries:")
 			// allow user to quit the program
 			if utils.UserExit(in) {
 				break out
@@ -40,7 +40,7 @@ out:
 		switch inputType {
 		case 0:
 			// check if user has a profile
-			hasProfile := utils.ReadInput("Do you have a profile? Enter 0 if you have one, Enter 1 if you don't have one but wish to make one, Enter any other key if you don't have one and don't wish to make one:")
+			hasProfile := utils.ReadInput("Do you have a profile?\n\tEnter 0 if you have one,\n\tEnter 1 if you don't have one but wish to make one,\n\tEnter any other key if you don't have one and don't wish to make one:")
 			// allow user to quit the program
 			if utils.UserExit(hasProfile) {
 				break out
@@ -68,7 +68,7 @@ out:
 		}
 
 		// check if user wants to continue with the program
-		run := strings.ToLower(utils.ReadInput("Would you like to calculate another profile's mark? (Enter 'Y' if you do, otherwise enter any key to exit the program):"))
+		run := strings.ToLower(utils.ReadInput("Would you like to calculate another profile's mark?\n\tEnter 'Y' if you do\n\tEnter any key to exit the program"))
 		if run == "yes" || run == "y" {
 			continue
 		}
@@ -89,7 +89,6 @@ func userHasProfile() {
 			fmt.Printf("User %v found\n", name)
 			userFound = true
 		}
-		fmt.Println(profile)
 	}
 	if !userFound {
 		fmt.Println("Oops... seems like we cannot find your profile")
@@ -129,7 +128,7 @@ func userNewProfile() oop.Profile {
 	if err := w.Error(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Appending succeeded")
+	log.Println("Appending succeeded")
 
 	return oop.NewProfile(name)
 }
@@ -140,7 +139,6 @@ func userNoProfile() {
 }
 
 func run(profile oop.Profile) string {
-	fmt.Println("Profile ---> ", profile)
 	// get csv name
 	csvFile := utils.ReadInput("Enter the name of your mark csv file (default is marks.csv):")
 	// allow user to quit the program
