@@ -76,28 +76,33 @@ out:
 
 // case if user has a profile
 func userHasProfile() {
-	username := utils.ReadInput("What is your username?")
-	fmt.Printf("Welcome back, %v!\n", username)
 	// assume that there is a <profileusername>marks.csv file outputted for the user
+	username := ""
+out:
+	for {
+		username = utils.ReadInput("What is your username?")
 
-	userFound := false
-	for _, profile := range utils.ReadCsvFile("profiles.csv") {
-		if profile[0] == username {
-			log.Printf("User %v found\n", username)
-			userFound = true
+		userFound := false
+		for _, profile := range utils.ReadCsvFile("profiles.csv") {
+			if profile[0] == username {
+				log.Printf("User %v found\n", username)
+				userFound = true
+				break out
+			}
+		}
+		if !userFound {
+			fmt.Printf("Oops... seems like we don't have '%v' in out database. Make sure you've spelt it correctly\n", username)
+			continue
 		}
 	}
-	if !userFound {
-		fmt.Println("Oops... seems like we cannot find your profile")
-		// TODO: do something
-		return
-	}
+
+	fmt.Printf("Welcome back, %v!\n", username)
 	file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
 	for _, line := range file {
 		fmt.Println(line)
 	}
 
-	// allow user to update details
+	// TODO: allow user to update details
 }
 
 // case if user want's to make a profile
