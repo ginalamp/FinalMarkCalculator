@@ -185,11 +185,10 @@ func run(profile oop.Profile) string {
 	}
 	// default set to "marks.csv"
 	if len(csvFile) == 0 {
-		// csvFile = "marks.csv"
-		csvFile = "marks2.csv"
+		csvFile = "marks.csv"
 	}
 	// modules := utils.InputCsv(csvFile)
-	modules := utils.InputCsv2(csvFile)
+	modules := utils.InputCsv(csvFile)
 
 	// set calculated module mark
 	for i, module := range modules {
@@ -207,6 +206,6 @@ func run(profile oop.Profile) string {
 
 	fmt.Println("Outputting results to csv...")
 	// utils.OutputCsv(modules, profile)
-	utils.OutputFullCsv(modules, profile, degree)
+	utils.OutputCsv(modules, profile, degree)
 	return ""
 }

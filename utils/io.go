@@ -31,36 +31,8 @@ func InputTerminal() {
 	fmt.Println("work in progress...")
 }
 
-// // process csv input
-// func InputCsv(csvFile string) []oop.Module {
-// 	records := ReadCsvFile(csvFile)
-
-// 	// add modules (1 module per row except first row)
-// 	var modules []oop.Module
-// 	for i, row := range records {
-// 		// skip title/1st row
-// 		if i == 0 {
-// 			continue
-// 		}
-// 		// convert string to slice
-// 		moduleData := strings.Split(row[0], ";")
-
-// 		// add init module names to module slice
-// 		module := oop.NewModule(moduleData[0])
-
-// 		// add marks and weights to module components
-// 		for i := 2; i <= len(moduleData[1:]); i += 2 {
-// 			mark := PercentageToFloat(moduleData[i-1])
-// 			weight := PercentageToFloat(moduleData[i])
-// 			module.Components = append(module.Components, oop.AddModuleComponent(mark, weight))
-// 		}
-// 		modules = append(modules, module)
-// 	}
-// 	return modules
-// }
-
 // process csv input
-func InputCsv2(csvFile string) []oop.Module {
+func InputCsv(csvFile string) []oop.Module {
 	records := ReadCsvFile(csvFile)
 
 	// add modules (1 module per row except first row)
@@ -119,37 +91,7 @@ func OutputTerminal(modules []oop.Module, degree oop.Degree) {
 	}
 }
 
-// output results to csv
-// Output csv https://golangcode.com/write-data-to-a-csv-file/
-// Create directory https://golangbyexample.com/create-directory-folder-golang/
-// func OutputCsv(modules []oop.Module, profile oop.Profile) {
-// 	// Create marks directory
-// 	err := MakeDirectoryIfNotExists(OutputDirectory)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	// output csv to file in directory
-// 	fileExtension := "_marks.csv"
-// 	if profile.Username == "" {
-// 		// output only marks/marks.csv if user has empty profile
-// 		fileExtension = "marks.csv"
-// 	}
-// 	file, err := os.Create(OutputDirectory + profile.Username + fileExtension)
-
-// 	CheckError("Cannot create file", err)
-// 	defer file.Close() // always close the file
-
-// 	writer := csv.NewWriter(file)
-// 	defer writer.Flush()
-
-// 	for _, module := range modules {
-// 		value := []string{module.Name, FloatToString(module.Mark)}
-// 		err := writer.Write(value)
-// 		CheckError("Cannot write to file", err)
-// 	}
-// }
-
-func OutputFullCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree) {
+func OutputCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree) {
 	// Create marks directory
 	err := MakeDirectoryIfNotExists(OutputDirectory)
 	if err != nil {
@@ -179,13 +121,6 @@ func OutputFullCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree)
 	CheckError("Cannot write to file", err)
 
 	// module output
-	// for _, module := range modules {
-	// 	value = []string{module.Name, FloatToString(module.Mark)}
-	// 	err := writer.Write(value)
-	// 	CheckError("Cannot write to file", err)
-	// }
-	// module output 2
-	// moduleOutput := []string
 	for _, module := range modules {
 		value = []string{module.Name, FloatToString(module.Mark)}
 		for _, component := range module.Components {
