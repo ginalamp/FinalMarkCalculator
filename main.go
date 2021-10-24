@@ -16,6 +16,7 @@ import (
 var Error float64 = -1
 var Empty float64 = -1
 var Float64Type int = 64
+var OutputDirectory string = "marks/"
 
 // run program
 func main() {
@@ -96,7 +97,7 @@ func userHasProfile() {
 		// TODO: do something
 		return
 	}
-	file := readCsvFile("marks/" + name + "_marks.csv")
+	file := readCsvFile(OutputDirectory + name + "_marks.csv")
 	for _, line := range file {
 		fmt.Println(line)
 	}
@@ -206,12 +207,12 @@ func outputTerminal(modules []oop.Module, degree oop.Degree) {
 // Create directory https://golangbyexample.com/create-directory-folder-golang/
 func outputCsv(modules []oop.Module, profile oop.Profile) {
 	// Create marks directory
-	err := makeDirectoryIfNotExists("marks")
+	err := makeDirectoryIfNotExists(OutputDirectory)
 	if err != nil {
 		log.Fatal(err)
 	}
 	// output csv to file in directory
-	file, err := os.Create("marks/" + profile.Name + "_marks.csv")
+	file, err := os.Create(OutputDirectory + profile.Name + "_marks.csv")
 	checkError("Cannot create file", err)
 	defer file.Close() // always close the file
 
