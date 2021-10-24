@@ -91,6 +91,7 @@ func OutputTerminal(modules []oop.Module, degree oop.Degree) {
 	}
 }
 
+// output Module final marks to csv
 func OutputCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree) {
 	// Create marks directory
 	err := MakeDirectoryIfNotExists(OutputDirectory)

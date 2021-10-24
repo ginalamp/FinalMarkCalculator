@@ -25,7 +25,7 @@ out:
 	for {
 		inputType := Empty
 		for {
-			in := utils.ReadInput("Mark input:\n\tEnter 0 to import a csv,\n\tEnter 1 to manually add entries:")
+			in := utils.ReadInput("Menu - Mark input:\n\tEnter 0 to import a csv,\n\tEnter 1 to manually add entries:")
 			// allow user to quit the program
 			if utils.UserExit(in) {
 				break out
@@ -49,7 +49,9 @@ out:
 			switch hasProfile {
 			case "0":
 				// profile = userHasProfile()
-				userHasProfile()
+				if userHasProfile() == "m" {
+					continue
+				}
 			case "1":
 				userNewProfile()
 			default:
@@ -75,7 +77,7 @@ out:
 }
 
 // case if user has a profile
-func userHasProfile() {
+func userHasProfile() string {
 	// assume that there is a <profileusername>marks.csv file outputted for the user
 	username := ""
 out:
@@ -92,6 +94,10 @@ out:
 		}
 		if !userFound {
 			fmt.Printf("Oops... seems like we don't have '%v' in out database. Make sure you've spelt it correctly\n", username)
+			menu := utils.ReadInput("\tEnter 'm' to go back to the main menu\n\tEnter any other key to retry entering your username.")
+			if menu == "m" || menu == "menu" {
+				return "m"
+			}
 			continue
 		}
 	}
@@ -113,6 +119,7 @@ out:
 	default:
 		fmt.Println("why u like dis")
 	}
+	return ""
 }
 
 // case if user want's to make a profile
@@ -166,7 +173,7 @@ out:
 	if err := w.Error(); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Appending succeeded")
+	// log.Println("Appending succeeded")
 
 	return oop.NewProfile(username)
 }
