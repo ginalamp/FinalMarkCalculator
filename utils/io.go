@@ -156,16 +156,16 @@ func OutputCsv(modules []oop.Module, profile oop.Profile, degree oop.Degree) {
 func InputCsvGuidelines() {
 	fmt.Println("\n-------------------------CSV INPUT GUIDELINES------------------------------")
 	fmt.Println("Use the marks_template.csv provided to get an idea of what your file should look like.\nNOTICE:")
-	fmt.Println("\t1. There may be no spaces, commas, or fullstops in your csv whatsoever.")
+	fmt.Println("\t1. There may be no spaces, commas, or full stops in your csv whatsoever.")
 	fmt.Println("\t2. All marks have to be integers.")
 
 	fmt.Println("\t3. The first row is for degree details.")
-	fmt.Println("\t\ta)The first column is for the degree name.")
-	fmt.Println("\t\tb)The second column is a placeholder for the degree final mark (which this program will calculate).")
+	fmt.Println("\t\ta) The first column is for the degree name.")
+	fmt.Println("\t\tb) The second column is a placeholder for the degree final mark (which this program will calculate).")
 
 	fmt.Println("\t4. The second row is for the column headers.")
-	fmt.Println("\t\ta)The first 2 columns are for the ModuleName header and ModuleFinalMark header.")
-	fmt.Println("\t\tb)the following columns being the component mark-weight combinations. You may add/remove mark-weight column pairs.")
+	fmt.Println("\t\ta) The first 2 columns are for the ModuleName header and ModuleFinalMark header.")
+	fmt.Println("\t\tb) The other columns are for the component mark-weight combinations. You may add/remove mark-weight column pairs.")
 
 	fmt.Println("\t5. The (first) column under the ModuleName header is reserved for the Module names.")
 	fmt.Println("\t6. The (second) column under the ModuleFinalMark header is reserved for the calculated final marks. These are set to 0 by default.")

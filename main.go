@@ -103,14 +103,13 @@ out:
 		userFound := false
 		for _, profile := range utils.ReadCsvFile("profiles.csv") {
 			if strings.EqualFold(profile[0], username) {
-				log.Printf("User %v found\n", username)
 				userFound = true
 				break out
 			}
 		}
 		if !userFound {
 			fmt.Printf("\nOops... seems like we don't have '%v' in out database. Make sure you've spelt it correctly\n", username)
-			menu := utils.ReadInput("\tEnter 'm' to go back to the main menu\n\tEnter any other key to retry entering your username.")
+			menu := utils.ReadInput("\tEnter 'm' to go back to the main menu\n\tEnter  key to retry entering your username.")
 			if menu == "m" || menu == "menu" {
 				return "m"
 			}
