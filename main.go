@@ -79,14 +79,14 @@ out:
 
 // case if user has a profile
 func userHasProfile() {
-	name := utils.ReadInput("What is your name?")
-	fmt.Printf("Welcome back, %v!\n", name)
-	// assume that there is a <profileName>marks.csv file outputted for the user
+	username := utils.ReadInput("What is your username?")
+	fmt.Printf("Welcome back, %v!\n", username)
+	// assume that there is a <profileusername>marks.csv file outputted for the user
 
 	userFound := false
 	for _, profile := range utils.ReadCsvFile("profiles.csv") {
-		if profile[0] == name {
-			fmt.Printf("User %v found\n", name)
+		if profile[0] == username {
+			log.Printf("User %v found\n", username)
 			userFound = true
 		}
 	}
@@ -95,7 +95,7 @@ func userHasProfile() {
 		// TODO: do something
 		return
 	}
-	file := utils.ReadCsvFile(OutputDirectory + name + "_marks.csv")
+	file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
 	for _, line := range file {
 		fmt.Println(line)
 	}
@@ -103,14 +103,32 @@ func userHasProfile() {
 
 // case if user want's to make a profile
 func userNewProfile() oop.Profile {
-	name := utils.ReadInput("Great, let's create a profile for you! What is your name?")
+	username := ""
+	fmt.Print("Great, let's create a profile for you! ")
+out:
+	for {
+		username := utils.ReadInput("What is your username?")
 
-	// allow user to quit
-	if name == "exit" || name == "quit" {
-		return oop.NewProfile(name)
+		// allow user to quit
+		if username == "exit" || username == "quit" {
+			return oop.NewProfile(username)
+		}
+		// username needs to be unique
+		usernameFound := false
+		for _, profile := range utils.ReadCsvFile("profiles.csv") {
+			if profile[0] == username {
+				fmt.Printf("The username %v is already used - please choose a unique username\n", username)
+				usernameFound = true
+				continue out
+			}
+		}
+		if !usernameFound {
+			break
+		}
 	}
-	fmt.Printf("Hi, %v! Happy to have you here!\n", name)
-	profile := oop.NewProfile(name)
+
+	fmt.Printf("Hi, %v! Happy to have you here!\n", username)
+	profile := oop.NewProfile(username)
 
 	run(profile)
 
@@ -121,7 +139,8 @@ func userNewProfile() oop.Profile {
 	}
 	defer f.Close()
 	var data [][]string
-	data = append(data, []string{profile.Name, "123"})
+	password := "123" // TODO make this user input
+	data = append(data, []string{profile.Username, password})
 
 	w := csv.NewWriter(f)
 	w.WriteAll(data)
@@ -130,7 +149,7 @@ func userNewProfile() oop.Profile {
 	}
 	log.Println("Appending succeeded")
 
-	return oop.NewProfile(name)
+	return oop.NewProfile(username)
 }
 
 // case if user doesn't have a profile and doesn't want to make one

@@ -4,16 +4,16 @@ package oop
 
 // Profile
 type Profile struct {
-	Name   string
-	Degree Degree
+	Username string
+	Degree   Degree
 	// InputFile  string
 	// OutputFile string
 }
 
 // init profile
-func NewProfile(name string) Profile {
+func NewProfile(username string) Profile {
 	profile := Profile{}
-	profile.Name = name
+	profile.Username = username
 	profile.Degree = Degree{}
 	return profile
 }

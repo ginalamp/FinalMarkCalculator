@@ -82,11 +82,11 @@ func OutputCsv(modules []oop.Module, profile oop.Profile) {
 	// output csv to file in directory
 	// print(profile.Name)
 	fileExtension := "_marks.csv"
-	if profile.Name == "" {
+	if profile.Username == "" {
 		// output only marks/marks.csv if user has empty profile
 		fileExtension = "marks.csv"
 	}
-	file, err := os.Create(OutputDirectory + profile.Name + fileExtension)
+	file, err := os.Create(OutputDirectory + profile.Username + fileExtension)
 
 	CheckError("Cannot create file", err)
 	defer file.Close() // always close the file
