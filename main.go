@@ -52,38 +52,15 @@ out:
 				userHasProfile()
 			case "1":
 				profile = userNewProfile()
+				if run(profile) == "exit" {
+					break out
+				}
 			default:
 				userNoProfile()
+				if run(profile) == "exit" {
+					break out
+				}
 			}
-
-			// get csv name
-			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv):")
-			// allow user to quit the program
-			if userExit(csvFile) {
-				break out
-			}
-			// default set to "marks.csv"
-			if len(csvFile) == 0 {
-				csvFile = "marks.csv"
-			}
-			modules := inputCsv(csvFile)
-
-			// set calculated module mark
-			for i, module := range modules {
-				modules[i].Mark = module.CalculateMark()
-			}
-			// set calculated degree mark
-			degree := oop.Degree{Modules: &modules}
-			degree.Mark = degree.CalculateMark()
-
-			outputTerminal(modules, degree)
-
-			// check if user wants to save results to profile
-			// profile := oop.NewProfile("Pietie")
-			profile.Degree = oop.Degree{Modules: &modules}
-
-			fmt.Println("Outputting results to csv...")
-			outputCsv(modules, profile)
 		case 1:
 			inputTerminal()
 		default:
@@ -136,6 +113,38 @@ func userNewProfile() oop.Profile {
 // case if user doesn't have a profile and doesn't want to make one
 func userNoProfile() {
 	fmt.Println("That's okay, you can always create a profile another time.")
+}
+
+func run(profile oop.Profile) string {
+	fmt.Println("Profile ---> ", profile)
+	// get csv name
+	csvFile := readInput("Enter the name of your mark csv file (default is marks.csv):")
+	// allow user to quit the program
+	if userExit(csvFile) {
+		return "exit"
+	}
+	// default set to "marks.csv"
+	if len(csvFile) == 0 {
+		csvFile = "marks.csv"
+	}
+	modules := inputCsv(csvFile)
+
+	// set calculated module mark
+	for i, module := range modules {
+		modules[i].Mark = module.CalculateMark()
+	}
+	// set calculated degree mark
+	degree := oop.Degree{Modules: &modules}
+	degree.Mark = degree.CalculateMark()
+
+	outputTerminal(modules, degree)
+
+	// check if user wants to save results to profile
+	profile.Degree = oop.Degree{Modules: &modules}
+
+	fmt.Println("Outputting results to csv...")
+	outputCsv(modules, profile)
+	return ""
 }
 
 // **************************************************************************************
@@ -197,7 +206,7 @@ func outputTerminal(modules []oop.Module, degree oop.Degree) {
 // Create directory https://golangbyexample.com/create-directory-folder-golang/
 func outputCsv(modules []oop.Module, profile oop.Profile) {
 	// Create marks directory
-	err := os.Mkdir("marks", 0755)
+	err := makeDirectoryIfNotExists("marks")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -248,6 +257,15 @@ func readCsvFile(filePath string) [][]string {
 // **************************************************************************************
 // *** helper functions
 // **************************************************************************************
+
+// make directory if not exist
+// https://gist.github.com/ivanzoid/5040166bb3f0c82575b52c2ca5f5a60c
+func makeDirectoryIfNotExists(path string) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return os.Mkdir(path, os.ModeDir|0755)
+	}
+	return nil
+}
 
 // check if user wan't to exit the program
 func userExit(in string) bool {
