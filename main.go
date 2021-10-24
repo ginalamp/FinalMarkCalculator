@@ -27,10 +27,10 @@ out:
 		for {
 			in := readInput("Enter 0 to import a csv, Enter 1 to manually add entries:")
 			// allow user to quit the program
-			if in == "exit" || in == "quit" {
+			if userExit(in) {
 				break out
 			}
-
+			// check if valid input given
 			inputType = stringToFloat(in)
 			if !(inputType == 0 || inputType == 1) {
 				continue
@@ -39,9 +39,24 @@ out:
 		}
 		switch inputType {
 		case 0:
+			// check if user has a profile
+			hasProfile := readInput("Do you have a profile? Enter 0 if you have one, Enter 1 if you don't have one but wish to make one, Enter any other key if you don't have one and don't wish to make one:")
+			// allow user to quit the program
+			if userExit(hasProfile) {
+				break out
+			}
+			switch hasProfile {
+			case "0":
+				userHasProfile()
+			case "1":
+				userNewProfile()
+			default:
+				userNoProfile()
+			}
+
 			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv), Enter exit to quit the program:")
 			// allow user to quit the program
-			if csvFile == "exit" || csvFile == "quit" {
+			if userExit(csvFile) {
 				break out
 			}
 
@@ -73,13 +88,30 @@ out:
 		}
 
 		// check if user wants to continue with the program
-		run := strings.ToLower(readInput("Would you like to calculate another profile's mark? (Enter 'Y' if you do, otherwise enter any key to exit the program)"))
+		run := strings.ToLower(readInput("Would you like to calculate another profile's mark? (Enter 'Y' if you do, otherwise enter any key to exit the program):"))
 		if run == "yes" || run == "y" {
 			continue
 		}
 		break
 	}
 	fmt.Println("Thank you for using Gina's mark calculator!")
+}
+
+// case if user has a profile
+func userHasProfile() {
+	name := readInput("What is your name?")
+	fmt.Printf("Welcome back, %v!\n", name)
+}
+
+// case if user want's to make a profile
+func userNewProfile() {
+	name := readInput("Great, let's create a profile for you! What is your name?")
+	fmt.Printf("Hi, %v\nHappy to have you here!", name)
+}
+
+// case if user doesn't have a profile and doesn't want to make one
+func userNoProfile() {
+	fmt.Println("That's okay, you can always create a profile another time.")
 }
 
 // **************************************************************************************
@@ -136,7 +168,7 @@ func outputTerminal(modules []oop.Module, degree oop.Degree) {
 	}
 }
 
-// output results to csvq
+// output results to csv
 // https://golangcode.com/write-data-to-a-csv-file/
 func outputCsv(modules []oop.Module, profile oop.Profile) {
 	file, err := os.Create(profile.Name + "_marks.csv")
@@ -156,7 +188,7 @@ func outputCsv(modules []oop.Module, profile oop.Profile) {
 // read terminal input
 func readInput(userPrompt string) string {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(userPrompt + ": \n")
+	fmt.Print(userPrompt + "\n")
 	userInput, _ := reader.ReadString('\n')
 	userInput = strings.TrimSpace(userInput) // remove whitespace
 
@@ -185,6 +217,14 @@ func readCsvFile(filePath string) [][]string {
 // **************************************************************************************
 // *** helper functions
 // **************************************************************************************
+
+// check if user wan't to exit the program
+func userExit(in string) bool {
+	if in == "exit" || in == "quit" {
+		return true
+	}
+	return false
+}
 
 // check if error != nil
 func checkError(message string, err error) {
