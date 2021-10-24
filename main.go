@@ -124,8 +124,7 @@ out:
 		case "0":
 			// view current results
 			modules := utils.InputCsv(OutputDirectory + username + "_marks.csv")
-			// fmt.Println(modules)
-			// set calculated module mark
+			// calculate reults
 			for i, module := range modules {
 				modules[i].Mark = module.CalculateMark()
 			}
@@ -133,12 +132,8 @@ out:
 			degree.Mark = degree.CalculateMark()
 			degree.Name = utils.DegreeName
 
-			fmt.Printf("Your overall degree mark: %.0f%%\n", degree.Mark)
-			for _, module := range modules {
-				fmt.Printf("\t%v: %.0f%%\n", module.Name, module.Mark)
-				// fmt.Println(line)
-			}
-
+			// output results
+			utils.OutputTerminal(modules, degree)
 		case "1":
 			// update results
 			profile := oop.NewProfile(username)
@@ -158,7 +153,7 @@ out:
 		username = utils.ReadInput("\nChoose a username:")
 
 		// allow user to quit
-		if username == "exit" || username == "quit" {
+		if utils.UserExit(username) {
 			return "exit"
 		}
 		// username may not be empty
@@ -167,6 +162,10 @@ out:
 			menu := utils.ReadInput("\tEnter 'm' to go back to the main menu\n\tEnter any other key to retry entering your username.")
 			if menu == "m" || menu == "menu" {
 				return "m"
+			}
+			// allow user to quit
+			if utils.UserExit(username) {
+				return "exit"
 			}
 			continue out
 		}
@@ -181,9 +180,14 @@ out:
 				if menu == "m" || menu == "menu" {
 					return "m"
 				}
+				// allow user to quit
+				if utils.UserExit(username) {
+					return "exit"
+				}
 				continue out
 			}
 		}
+		// username not in records
 		if !usernameFound {
 			break
 		}
@@ -201,15 +205,13 @@ out:
 	}
 	defer f.Close()
 	var data [][]string
-	password := "123" // TODO make this user input
-	data = append(data, []string{profile.Username, password})
+	data = append(data, []string{profile.Username})
 
 	w := csv.NewWriter(f)
 	w.WriteAll(data)
 	if err := w.Error(); err != nil {
 		log.Fatal(err)
 	}
-	// log.Println("Appending succeeded")
 
 	return ""
 }
@@ -244,12 +246,9 @@ func run(profile oop.Profile) string {
 	degree.Name = utils.DegreeName
 
 	utils.OutputTerminal(modules, degree)
-
-	// TODO: check if user wants to save results to profile
 	profile.Degree = oop.Degree{Name: degree.Name, Modules: &modules}
 
-	fmt.Println("\nOutputting your results to .csv...")
-	// utils.OutputCsv(modules, profile)
+	fmt.Println("\nWriting your results to .csv...")
 	utils.OutputCsv(modules, profile, degree)
 	return ""
 }

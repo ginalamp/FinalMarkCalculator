@@ -1,14 +1,12 @@
 package utils
 
+// conversion functions
+
 import (
 	"fmt"
 	"strconv"
 	"strings"
 )
-
-// **************************************************************************************
-// *** helper functions
-// **************************************************************************************
 
 // convert "50%" to 50.0
 func PercentageToFloat(s string) float64 {

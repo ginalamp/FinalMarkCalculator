@@ -27,7 +27,6 @@ func ReadInput(userPrompt string) string {
 	userInput, _ := reader.ReadString('\n')
 	userInput = strings.TrimSpace(userInput) // remove whitespace
 
-	// fmt.Println("input read: ", userInput)
 	return userInput
 }
 
