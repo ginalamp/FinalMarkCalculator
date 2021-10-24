@@ -20,10 +20,18 @@ var Float64Type int = 64
 // run program
 func main() {
 	fmt.Println("Welcome to Gina's Mark Calculator")
+	fmt.Println("You may enter 'exit' or 'quit' at any input point if you wish to quit the program")
+out:
 	for {
 		inputType := Empty
 		for {
-			inputType = stringToFloat(readInput("Enter 0 to import a csv, Enter 1 to manually add entries:"))
+			in := readInput("Enter 0 to import a csv, Enter 1 to manually add entries:")
+			// allow user to quit the program
+			if in == "exit" || in == "quit" {
+				break out
+			}
+
+			inputType = stringToFloat(in)
 			if !(inputType == 0 || inputType == 1) {
 				continue
 			}
@@ -31,7 +39,12 @@ func main() {
 		}
 		switch inputType {
 		case 0:
-			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv)")
+			csvFile := readInput("Enter the name of your mark csv file (default is marks.csv), Enter exit to quit the program:")
+			// allow user to quit the program
+			if csvFile == "exit" || csvFile == "quit" {
+				break out
+			}
+
 			if len(csvFile) == 0 {
 				csvFile = "marks.csv"
 			}
@@ -64,9 +77,9 @@ func main() {
 		if run == "yes" || run == "y" {
 			continue
 		}
-		fmt.Println("Thank you for using Gina's mark calculator!")
 		break
 	}
+	fmt.Println("Thank you for using Gina's mark calculator!")
 }
 
 // **************************************************************************************
