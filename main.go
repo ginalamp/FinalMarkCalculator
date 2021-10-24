@@ -19,13 +19,14 @@ var OutputDirectory string = "marks/"
 
 // run program
 func main() {
-	fmt.Println("Welcome to Gina's Mark Calculator")
-	fmt.Println("You may enter 'exit' or 'quit' at any input point if you wish to quit the program")
+	fmt.Println("Welcome to Gina's Mark Calculator!")
+	fmt.Println("You may enter 'exit' or 'quit' at any input point if you wish to quit the program.")
 out:
 	for {
 		inputType := Empty
 		for {
-			in := utils.ReadInput("Menu - Mark input:\n\tEnter 0 to import a csv,\n\tEnter 1 to manually add entries:")
+			fmt.Println("-----------------------------MAIN MENU-----------------------------------")
+			in := utils.ReadInput("\tEnter 0 to import a csv,\n\tEnter 1 to get the guidelines of how your csv must look like\n\tEnter exit to quit the program")
 			// allow user to quit the program
 			if utils.UserExit(in) {
 				break out
@@ -40,7 +41,7 @@ out:
 		switch inputType {
 		case 0:
 			// check if user has a profile
-			hasProfile := utils.ReadInput("Do you have a profile?\n\tEnter 0 if you have one,\n\tEnter 1 if you don't have one but wish to make one,\n\tEnter any other key if you don't have one and don't wish to make one:")
+			hasProfile := utils.ReadInput("\nDo you have a profile?\n\tEnter 0 if you have one,\n\tEnter 1 if you don't have one but wish to make one,\n\tEnter any other key if you don't have one and don't wish to make one:")
 			// allow user to quit the program
 			if utils.UserExit(hasProfile) {
 				break out
@@ -61,19 +62,18 @@ out:
 				}
 			}
 		case 1:
-			utils.InputTerminal()
-		default:
-			fmt.Println("why u like dis")
+			utils.InputCsvGuidelines()
+			continue
 		}
 
 		// check if user wants to continue with the program
-		run := strings.ToLower(utils.ReadInput("Would you like to calculate another profile's mark?\n\tEnter 'Y' if you do\n\tEnter any key to exit the program"))
+		run := strings.ToLower(utils.ReadInput("\nWould you like to calculate another profile's mark?\n\tEnter 'Y' if you do\n\tEnter any key to exit the program"))
 		if run == "yes" || run == "y" {
 			continue
 		}
 		break
 	}
-	fmt.Println("Thank you for using Gina's mark calculator!")
+	fmt.Println("\nThank you for using Gina's mark calculator!")
 }
 
 // case if user has a profile
@@ -82,18 +82,18 @@ func userHasProfile() string {
 	username := ""
 out:
 	for {
-		username = utils.ReadInput("What is your username?")
+		username = utils.ReadInput("\nWhat is your username?")
 
 		userFound := false
 		for _, profile := range utils.ReadCsvFile("profiles.csv") {
-			if profile[0] == username {
+			if strings.EqualFold(profile[0], username) {
 				log.Printf("User %v found\n", username)
 				userFound = true
 				break out
 			}
 		}
 		if !userFound {
-			fmt.Printf("Oops... seems like we don't have '%v' in out database. Make sure you've spelt it correctly\n", username)
+			fmt.Printf("\nOops... seems like we don't have '%v' in out database. Make sure you've spelt it correctly\n", username)
 			menu := utils.ReadInput("\tEnter 'm' to go back to the main menu\n\tEnter any other key to retry entering your username.")
 			if menu == "m" || menu == "menu" {
 				return "m"
@@ -102,33 +102,34 @@ out:
 		}
 	}
 
-	fmt.Printf("Welcome back, %v!\n", username)
-	userAction := utils.ReadInput("\tEnter 0 to view your results\n\tEnter 1 to update your results (import a new csv with your updated results)")
+	fmt.Printf("\nWelcome back, %v!\n", username)
+	for {
+		userAction := utils.ReadInput("\tEnter 0 to view your results\n\tEnter 1 to update your results (import a new csv with your updated results)\n\tEnter any other key to go back to the main menu")
 
-	switch userAction {
-	case "0":
-		// view current results
-		file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
-		for _, line := range file {
-			fmt.Println(line)
+		switch userAction {
+		case "0":
+			// view current results
+			file := utils.ReadCsvFile(OutputDirectory + username + "_marks.csv")
+			for _, line := range file {
+				fmt.Println(line)
+			}
+		case "1":
+			// update results
+			profile := oop.NewProfile(username)
+			run(profile)
+		default:
+			return ""
 		}
-	case "1":
-		// update results
-		profile := oop.NewProfile(username)
-		run(profile)
-	default:
-		fmt.Println("why u like dis")
 	}
-	return ""
 }
 
 // case if user want's to make a profile
 func userNewProfile() oop.Profile {
 	username := ""
-	fmt.Print("Great, let's create a profile for you! ")
+	fmt.Print("\nGreat, let's create a profile for you! ")
 out:
 	for {
-		username = utils.ReadInput("What is your username?")
+		username = utils.ReadInput("\nWhat is your username?")
 
 		// allow user to quit
 		if username == "exit" || username == "quit" {
@@ -136,14 +137,15 @@ out:
 		}
 		// username may not be empty
 		if username == "" {
-			fmt.Println("NOTE: Your username may not be empty.")
+			fmt.Println("\nNOTE: Your username may not be empty.")
 			continue out
 		}
 		// username needs to be unique
 		usernameFound := false
 		for _, profile := range utils.ReadCsvFile("profiles.csv") {
-			if profile[0] == username {
-				fmt.Printf("NOTE: The username %v is already used - please choose a unique username\n", username)
+
+			if strings.EqualFold(profile[0], username) {
+				fmt.Printf("\nNOTE: The username %v is already used - please choose a unique username\n", username)
 				usernameFound = true
 				continue out
 			}
@@ -153,7 +155,7 @@ out:
 		}
 	}
 
-	fmt.Printf("Hi, %v! Happy to have you here!\n", username)
+	fmt.Printf("\nHi, %v! Happy to have you here!\n", username)
 	profile := oop.NewProfile(username)
 
 	run(profile)
@@ -180,12 +182,12 @@ out:
 
 // case if user doesn't have a profile and doesn't want to make one
 func userNoProfile() {
-	fmt.Println("That's okay, you can always create a profile another time.")
+	fmt.Println("\nThat's okay, you can always create a profile another time.")
 }
 
 func run(profile oop.Profile) string {
 	// get csv name
-	csvFile := utils.ReadInput("Enter the relative path of your csv file (default is marks.csv):")
+	csvFile := utils.ReadInput("\nEnter the relative path of your csv file (default is marks.csv - just click the Enter button to access the default):")
 	// allow user to quit the program
 	if utils.UserExit(csvFile) {
 		return "exit"
@@ -211,7 +213,7 @@ func run(profile oop.Profile) string {
 	// TODO: check if user wants to save results to profile
 	profile.Degree = oop.Degree{Name: degree.Name, Modules: &modules}
 
-	fmt.Println("Outputting results to .csv...")
+	fmt.Println("\nOutputting your results to .csv...")
 	// utils.OutputCsv(modules, profile)
 	utils.OutputCsv(modules, profile, degree)
 	return ""

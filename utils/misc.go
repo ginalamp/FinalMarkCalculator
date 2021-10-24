@@ -3,6 +3,7 @@ package utils
 import (
 	"log"
 	"os"
+	"strings"
 )
 
 // make directory if not exist
@@ -16,7 +17,7 @@ func MakeDirectoryIfNotExists(path string) error {
 
 // check if user wan't to exit the program
 func UserExit(in string) bool {
-	if in == "exit" || in == "quit" {
+	if strings.ToLower(in) == "exit" || strings.ToLower(in) == "quit" {
 		return true
 	}
 	return false
